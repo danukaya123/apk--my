@@ -169,10 +169,21 @@ class VideoThumbnail extends StatelessWidget {
         children: [
           if (videoInfo.metadata.thumbnail.isNotEmpty)
             Image.network(
-              videoInfo.metadata.thumbnail,
+              // Simple improvement: Always load medium quality instead of default
+              videoInfo.metadata.thumbnail.replaceAll(
+                'default.jpg',
+                'hqdefault.jpg',
+              ),
               fit: BoxFit.cover,
-              errorBuilder: (context, error, stack) =>
-                  const Icon(Icons.error, color: Colors.red),
+              errorBuilder: (context, error, stack) {
+                // Fall back to default if medium quality fails
+                return Image.network(
+                  videoInfo.metadata.thumbnail,
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stack) =>
+                      const Icon(Icons.error, color: Colors.red),
+                );
+              },
             ),
           Container(
             decoration: BoxDecoration(

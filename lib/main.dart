@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:myapp/providers/download_provider.dart';
 import 'package:myapp/providers/video_provider.dart';
-import 'package:myapp/view/screens/onboarding_screen.dart';
+import 'package:myapp/view/screens/splash_screen.dart';
 import 'package:myapp/view/theme/app_theme.dart';
 import 'package:provider/provider.dart';
 
@@ -22,7 +22,7 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         title: 'YouTube Downloader',
         theme: AppTheme.darkTheme, // Correctly referencing the theme
-        home: const OnboardingScreen(),
+        home: const SplashScreen(),
         debugShowCheckedModeBanner: false,
       ),
     );

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:myapp/view/screens/home_screen.dart';
 import 'package:myapp/view/theme/app_theme.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});
@@ -13,6 +14,19 @@ class OnboardingScreen extends StatefulWidget {
 class _OnboardingScreenState extends State<OnboardingScreen> {
   final PageController _pageController = PageController();
   int _currentPage = 0;
+
+  Future<void> _completeOnboarding() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('hasCompletedOnboarding', true);
+    if (mounted) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const HomeScreen(),
+        ),
+      );
+    }
+  }
 
   final List<Widget> _onboardingPages = [
     const OnboardingPage(
@@ -53,14 +67,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 children: [
                   buildProgressIndicator(),
                   TextButton(
-                    onPressed: () {
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const HomeScreen(),
-                        ),
-                      );
-                    },
+                    onPressed: _completeOnboarding,
                     child: const Text(
                       'Skip',
                       style: TextStyle(
@@ -97,12 +104,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   GestureDetector(
                     onTap: () {
                       if (_currentPage == _onboardingPages.length - 1) {
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const HomeScreen(),
-                          ),
-                        );
+                        _completeOnboarding();
                       } else {
                         _pageController.nextPage(
                           duration: const Duration(milliseconds: 500),
