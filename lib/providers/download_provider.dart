@@ -106,8 +106,9 @@ class DownloadProvider with ChangeNotifier {
   void _calculateSpeedAndRemainingTime() {
     if (!_isDownloading ||
         _stopwatch.elapsedMilliseconds < 500 ||
-        _receivedBytes == 0)
+        _receivedBytes == 0) {
       return;
+    }
 
     final elapsedSeconds = _stopwatch.elapsed.inSeconds;
     if (elapsedSeconds > 0) {
