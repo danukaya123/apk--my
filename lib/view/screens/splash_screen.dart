@@ -1,4 +1,3 @@
-
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -13,7 +12,8 @@ class SplashScreen extends StatefulWidget {
   State<SplashScreen> createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderStateMixin {
+class _SplashScreenState extends State<SplashScreen>
+    with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
   late Animation<double> _fadeAnimation;
   late Animation<double> _scaleAnimation;
@@ -51,12 +51,10 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
   }
 
   Future<void> _checkPermissions() async {
-    final statuses = await [
-      Permission.videos,
-      Permission.photos,
-    ].request();
+    final statuses = await [Permission.videos, Permission.photos].request();
 
-    if (statuses[Permission.videos]!.isGranted && statuses[Permission.photos]!.isGranted) {
+    if (statuses[Permission.videos]!.isGranted &&
+        statuses[Permission.photos]!.isGranted) {
       _navigateToOnboarding();
     } else {
       _showPermissionDeniedDialog();
@@ -67,12 +65,10 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
     Navigator.pushReplacement(
       context,
       PageRouteBuilder(
-        pageBuilder: (context, animation, secondaryAnimation) => const OnboardingScreen(),
+        pageBuilder: (context, animation, secondaryAnimation) =>
+            const OnboardingScreen(),
         transitionsBuilder: (context, animation, secondaryAnimation, child) {
-          return FadeTransition(
-            opacity: animation,
-            child: child,
-          );
+          return FadeTransition(opacity: animation, child: child);
         },
       ),
     );
@@ -83,7 +79,9 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Permission Denied'),
-        content: const Text('Access to photos and videos is required to download and save media. Please enable it in the app settings.'),
+        content: const Text(
+          'Access to photos and videos is required to download and save media. Please enable it in the app settings.',
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
@@ -104,7 +102,10 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [AppTheme.backgroundDark, AppTheme.backgroundDark.withOpacity(0.8)],
+            colors: [
+              AppTheme.backgroundDark,
+              AppTheme.backgroundDark.withOpacity(0.8),
+            ],
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
           ),

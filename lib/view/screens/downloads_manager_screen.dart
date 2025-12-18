@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:myapp/view/theme/app_theme.dart';
 import 'package:provider/provider.dart';
@@ -11,9 +10,7 @@ class DownloadsManagerScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppTheme.backgroundDark,
-      appBar: AppBar(
-        title: const Text('Downloads'),
-      ),
+      appBar: AppBar(title: const Text('Downloads')),
       body: Consumer<DownloadProvider>(
         builder: (context, downloadProvider, child) {
           return ListView(
@@ -32,7 +29,9 @@ class DownloadsManagerScreen extends StatelessWidget {
                   subtitle: LinearProgressIndicator(
                     value: entry.value,
                     backgroundColor: AppTheme.surfaceDark,
-                    valueColor: const AlwaysStoppedAnimation<Color>(AppTheme.primary),
+                    valueColor: const AlwaysStoppedAnimation<Color>(
+                      AppTheme.primary,
+                    ),
                   ),
                   trailing: Text('${(entry.value * 100).toStringAsFixed(1)}%'),
                 );
@@ -48,7 +47,10 @@ class DownloadsManagerScreen extends StatelessWidget {
               ...downloadProvider.downloadedVideos.map((video) {
                 return ListTile(
                   title: Text(video),
-                  trailing: const Icon(Icons.check_circle, color: AppTheme.primary),
+                  trailing: const Icon(
+                    Icons.check_circle,
+                    color: AppTheme.primary,
+                  ),
                 );
               }),
             ],

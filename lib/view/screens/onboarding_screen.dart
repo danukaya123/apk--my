@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:myapp/view/screens/home_screen.dart';
@@ -18,7 +17,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   final List<Widget> _onboardingPages = [
     const OnboardingPage(
       title: 'Welcome to Quizontal',
-      description: 'Download YouTube videos in HD quality directly to your device.',
+      description:
+          'Download YouTube videos in HD quality directly to your device.',
       icon: Icons.movie_filter_rounded,
       boxArt: CustomBoxPainter(color: AppTheme.primary),
     ),
@@ -44,7 +44,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         child: Column(
           children: [
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+              padding: const EdgeInsets.symmetric(
+                horizontal: 20.0,
+                vertical: 10.0,
+              ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -53,12 +56,17 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     onPressed: () {
                       Navigator.pushReplacement(
                         context,
-                        MaterialPageRoute(builder: (context) => const HomeScreen()),
+                        MaterialPageRoute(
+                          builder: (context) => const HomeScreen(),
+                        ),
                       );
                     },
                     child: const Text(
                       'Skip',
-                      style: TextStyle(color: AppTheme.textSecondary, fontSize: 16),
+                      style: TextStyle(
+                        color: AppTheme.textSecondary,
+                        fontSize: 16,
+                      ),
                     ),
                   ),
                 ],
@@ -91,7 +99,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       if (_currentPage == _onboardingPages.length - 1) {
                         Navigator.pushReplacement(
                           context,
-                          MaterialPageRoute(builder: (context) => const HomeScreen()),
+                          MaterialPageRoute(
+                            builder: (context) => const HomeScreen(),
+                          ),
                         );
                       } else {
                         _pageController.nextPage(
@@ -186,9 +196,7 @@ class OnboardingPage extends StatelessWidget {
                     Positioned.fill(
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(30),
-                        child: CustomPaint(
-                          painter: boxArt,
-                        ),
+                        child: CustomPaint(painter: boxArt),
                       ),
                     ),
                     Center(
@@ -198,11 +206,7 @@ class OnboardingPage extends StatelessWidget {
                           color: AppTheme.backgroundDark.withOpacity(0.5),
                           borderRadius: BorderRadius.circular(20),
                         ),
-                        child: Icon(
-                          icon,
-                          color: Colors.white,
-                          size: 80,
-                        ),
+                        child: Icon(icon, color: Colors.white, size: 80),
                       ),
                     ),
                   ],
@@ -254,7 +258,12 @@ class CustomBoxPainter extends CustomPainter {
     path.lineTo(size.width * 0.8, 0);
     path.quadraticBezierTo(size.width, 0, size.width, size.height * 0.2);
     path.lineTo(size.width, size.height * 0.8);
-    path.quadraticBezierTo(size.width, size.height, size.width * 0.8, size.height);
+    path.quadraticBezierTo(
+      size.width,
+      size.height,
+      size.width * 0.8,
+      size.height,
+    );
     path.lineTo(size.width * 0.2, size.height);
     path.quadraticBezierTo(0, size.height, 0, size.height * 0.8);
     path.lineTo(0, size.height * 0.2);
@@ -284,11 +293,31 @@ class WavyBackgroundPainter extends CustomPainter {
 
     final path = Path();
     path.moveTo(0, size.height * 0.5);
-    path.quadraticBezierTo(size.width * 0.25, size.height * 0.4, size.width * 0.5, size.height * 0.5);
-    path.quadraticBezierTo(size.width * 0.75, size.height * 0.6, size.width, size.height * 0.5);
+    path.quadraticBezierTo(
+      size.width * 0.25,
+      size.height * 0.4,
+      size.width * 0.5,
+      size.height * 0.5,
+    );
+    path.quadraticBezierTo(
+      size.width * 0.75,
+      size.height * 0.6,
+      size.width,
+      size.height * 0.5,
+    );
     path.moveTo(0, size.height * 0.7);
-    path.quadraticBezierTo(size.width * 0.25, size.height * 0.8, size.width * 0.5, size.height * 0.7);
-    path.quadraticBezierTo(size.width * 0.75, size.height * 0.6, size.width, size.height * 0.7);
+    path.quadraticBezierTo(
+      size.width * 0.25,
+      size.height * 0.8,
+      size.width * 0.5,
+      size.height * 0.7,
+    );
+    path.quadraticBezierTo(
+      size.width * 0.75,
+      size.height * 0.6,
+      size.width,
+      size.height * 0.7,
+    );
 
     canvas.drawPath(path, paint);
   }

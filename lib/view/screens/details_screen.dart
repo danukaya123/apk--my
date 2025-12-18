@@ -43,7 +43,10 @@ class _DetailsScreenState extends State<DetailsScreen> {
   Widget build(BuildContext context) {
     final videoProvider = Provider.of<VideoProvider>(context);
     final videoInfo = videoProvider.videoInfo;
-    final downloadProvider = Provider.of<DownloadProvider>(context, listen: false);
+    final downloadProvider = Provider.of<DownloadProvider>(
+      context,
+      listen: false,
+    );
 
     if (videoInfo == null) {
       return Scaffold(
@@ -71,8 +74,7 @@ class _DetailsScreenState extends State<DetailsScreen> {
               return Container(
                 decoration: const BoxDecoration(
                   color: AppTheme.backgroundDark,
-                  borderRadius:
-                      BorderRadius.vertical(top: Radius.circular(30)),
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
                 ),
                 child: ListView(
                   controller: scrollController,
@@ -90,10 +92,13 @@ class _DetailsScreenState extends State<DetailsScreen> {
                       },
                     ),
                     const SizedBox(height: 30),
-                    const Text('QUALITY',
-                        style: TextStyle(
-                            color: AppTheme.textSecondary,
-                            fontWeight: FontWeight.bold)),
+                    const Text(
+                      'QUALITY',
+                      style: TextStyle(
+                        color: AppTheme.textSecondary,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                     const SizedBox(height: 15),
                     if (_selectedFormat == 'video')
                       QualitySelectionList(
@@ -131,15 +136,12 @@ class _DetailsScreenState extends State<DetailsScreen> {
                   downloadProvider.downloadFile(
                     _selectedQuality!.url!,
                     _selectedQuality!.filename,
-                    _selectedQuality!.size!,
-                    videoInfo.metadata.title,
                   );
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => DownloadingScreen(
-                        videoInfo: videoInfo,
-                      ),
+                      builder: (context) =>
+                          DownloadingScreen(videoInfo: videoInfo),
                     ),
                   );
                 }
@@ -177,7 +179,7 @@ class VideoThumbnail extends StatelessWidget {
               gradient: LinearGradient(
                 colors: [
                   Colors.transparent,
-                  AppTheme.backgroundDark.withOpacity(0.8)
+                  AppTheme.backgroundDark.withOpacity(0.8),
                 ],
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
@@ -191,8 +193,10 @@ class VideoThumbnail extends StatelessWidget {
             child: CircleAvatar(
               backgroundColor: Colors.black.withOpacity(0.5),
               child: IconButton(
-                icon: const Icon(Icons.arrow_back_ios_new_rounded,
-                    color: Colors.white),
+                icon: const Icon(
+                  Icons.arrow_back_ios_new_rounded,
+                  color: Colors.white,
+                ),
                 onPressed: () => Navigator.pop(context),
               ),
             ),
@@ -215,8 +219,11 @@ class VideoThumbnail extends StatelessWidget {
               radius: 35,
               backgroundColor: Colors.black.withOpacity(0.5),
               child: IconButton(
-                icon: const Icon(Icons.play_arrow_rounded,
-                    color: Colors.white, size: 40),
+                icon: const Icon(
+                  Icons.play_arrow_rounded,
+                  color: Colors.white,
+                  size: 40,
+                ),
                 onPressed: () {
                   final videoUrl = videoInfo.downloads.mp4.first.url;
                   if (videoUrl != null) {
@@ -250,48 +257,63 @@ class VideoDetails extends StatelessWidget {
       children: [
         Text(
           videoInfo.metadata.title,
-          style: Theme.of(context)
-              .textTheme
-              .headlineSmall
-              ?.copyWith(fontWeight: FontWeight.bold),
+          style: Theme.of(
+            context,
+          ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
           maxLines: 2,
           overflow: TextOverflow.ellipsis,
         ),
         const SizedBox(height: 15),
         Row(
           children: [
-            const CircleAvatar(
-              radius: 12,
-              backgroundColor: Colors.grey,
-            ),
+            const CircleAvatar(radius: 12, backgroundColor: Colors.grey),
             const SizedBox(width: 10),
-            Text(videoInfo.metadata.author,
-                style: Theme.of(context).textTheme.bodyLarge),
+            Text(
+              videoInfo.metadata.author,
+              style: Theme.of(context).textTheme.bodyLarge,
+            ),
             const SizedBox(width: 5),
-            const Icon(Icons.check_circle_rounded,
-                color: AppTheme.primary, size: 16),
+            const Icon(
+              Icons.check_circle_rounded,
+              color: AppTheme.primary,
+              size: 16,
+            ),
           ],
         ),
         const SizedBox(height: 15),
         Row(
           children: [
-            const Icon(Icons.visibility_rounded,
-                color: AppTheme.textSecondary, size: 16),
+            const Icon(
+              Icons.visibility_rounded,
+              color: AppTheme.textSecondary,
+              size: 16,
+            ),
             const SizedBox(width: 8),
-            Text('${_formatViews(videoInfo.metadata.views)} Views',
-                style: Theme.of(context).textTheme.bodyMedium),
+            Text(
+              '${_formatViews(videoInfo.metadata.views)} Views',
+              style: Theme.of(context).textTheme.bodyMedium,
+            ),
             const SizedBox(width: 20),
-            const Icon(Icons.timer_rounded,
-                color: AppTheme.textSecondary, size: 16),
+            const Icon(
+              Icons.timer_rounded,
+              color: AppTheme.textSecondary,
+              size: 16,
+            ),
             const SizedBox(width: 8),
-            Text(videoInfo.metadata.duration,
-                style: Theme.of(context).textTheme.bodyMedium),
+            Text(
+              videoInfo.metadata.duration,
+              style: Theme.of(context).textTheme.bodyMedium,
+            ),
           ],
         ),
         const SizedBox(height: 15),
-        const Text('Show Description',
-            style: TextStyle(
-                color: AppTheme.primary, fontWeight: FontWeight.bold)),
+        const Text(
+          'Show Description',
+          style: TextStyle(
+            color: AppTheme.primary,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
       ],
     );
   }
@@ -317,17 +339,32 @@ class FormatSelector extends StatelessWidget {
       child: Row(
         children: [
           Expanded(
-            child: _buildFormatButton(context, 'video', 'Video (MP4)', Icons.videocam_rounded),
+            child: _buildFormatButton(
+              context,
+              'video',
+              'Video (MP4)',
+              Icons.videocam_rounded,
+            ),
           ),
           Expanded(
-            child: _buildFormatButton(context, 'audio', 'Audio (MP3)', Icons.headset_rounded),
+            child: _buildFormatButton(
+              context,
+              'audio',
+              'Audio (MP3)',
+              Icons.headset_rounded,
+            ),
           ),
         ],
       ),
     );
   }
 
-    Widget _buildFormatButton(BuildContext context, String format, String label, IconData icon) {
+  Widget _buildFormatButton(
+    BuildContext context,
+    String format,
+    String label,
+    IconData icon,
+  ) {
     final isSelected = selectedFormat == format;
     return GestureDetector(
       onTap: () => onFormatSelected(format),
@@ -340,13 +377,18 @@ class FormatSelector extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(icon, color: isSelected ? Colors.black : Colors.white, size: 20),
+            Icon(
+              icon,
+              color: isSelected ? Colors.black : Colors.white,
+              size: 20,
+            ),
             const SizedBox(width: 10),
             Text(
               label,
               style: TextStyle(
-                  color: isSelected ? Colors.black : Colors.white,
-                  fontWeight: FontWeight.bold),
+                color: isSelected ? Colors.black : Colors.white,
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ],
         ),
@@ -395,34 +437,45 @@ class QualitySelectionList extends StatelessWidget {
                   : AppTheme.surfaceDark,
               borderRadius: BorderRadius.circular(15),
               border: Border.all(
-                  color: isSelected ? AppTheme.primary : Colors.transparent,
-                  width: 2),
+                color: isSelected ? AppTheme.primary : Colors.transparent,
+                width: 2,
+              ),
             ),
             child: Row(
               children: [
                 CircleAvatar(
                   radius: 20,
                   backgroundColor: AppTheme.surfaceDark.withOpacity(0.5),
-                  child: Icon(_getQualityIcon(isAudio: isAudio),
-                      color: Colors.white),
+                  child: Icon(
+                    _getQualityIcon(isAudio: isAudio),
+                    color: Colors.white,
+                  ),
                 ),
                 const SizedBox(width: 15),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(qualityLabel,
-                          style: const TextStyle(fontWeight: FontWeight.bold)),
+                      Text(
+                        qualityLabel,
+                        style: const TextStyle(fontWeight: FontWeight.bold),
+                      ),
                       if (index == 0 && !isAudio)
-                        const Text('Recommended',
-                            style: TextStyle(
-                                color: AppTheme.textSecondary, fontSize: 12)),
+                        const Text(
+                          'Recommended',
+                          style: TextStyle(
+                            color: AppTheme.textSecondary,
+                            fontSize: 12,
+                          ),
+                        ),
                     ],
                   ),
                 ),
                 Flexible(
-                  child: Text(_formatSize(format.size),
-                      style: const TextStyle(fontWeight: FontWeight.bold)),
+                  child: Text(
+                    _formatSize(format.size),
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
                 ),
                 const SizedBox(width: 15),
                 Container(
@@ -463,21 +516,22 @@ class DownloadButton extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
       decoration: BoxDecoration(
-         color: AppTheme.backgroundDark,
-         boxShadow: [
-            BoxShadow(
-              color: AppTheme.backgroundDark,
-              spreadRadius: 20,
-              blurRadius: 20,
-            )
-         ]
+        color: AppTheme.backgroundDark,
+        boxShadow: [
+          BoxShadow(
+            color: AppTheme.backgroundDark,
+            spreadRadius: 20,
+            blurRadius: 20,
+          ),
+        ],
       ),
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
           minimumSize: const Size(double.infinity, 60),
           backgroundColor: isEnabled ? AppTheme.primary : AppTheme.surfaceDark,
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(30),
+          ),
         ),
         onPressed: isEnabled ? onPressed : null,
         child: Row(
@@ -488,9 +542,10 @@ class DownloadButton extends StatelessWidget {
             Text(
               'Download (${_formatSize(selectedQuality?.size)})',
               style: const TextStyle(
-                  color: Colors.black,
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold),
+                color: Colors.black,
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ],
         ),

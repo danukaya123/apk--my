@@ -1,4 +1,3 @@
-
 int? _parseInt(dynamic value) {
   if (value == null) return null;
   if (value is int) return value;
@@ -11,6 +10,8 @@ class VideoInfo {
   final Downloads downloads;
 
   VideoInfo({required this.metadata, required this.downloads});
+
+  String? get title => metadata.title;
 
   factory VideoInfo.fromJson(Map<String, dynamic> json) {
     return VideoInfo(
@@ -44,7 +45,11 @@ class Metadata {
       views: _parseInt(json['views']),
       description: json['description'] ?? 'No description available',
       author: json['author'] ?? 'Unknown Author',
-      duration: (json['duration'] is Map ? json['duration']['timestamp'] : json['duration']) ?? 'Unknown duration',
+      duration:
+          (json['duration'] is Map
+              ? json['duration']['timestamp']
+              : json['duration']) ??
+          'Unknown duration',
     );
   }
 }

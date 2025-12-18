@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:myapp/models/video_info.dart';
 import 'package:myapp/providers/download_provider.dart';
-import 'package:myapp/view/screens/download_manager_screen.dart';
-import 'package:myapp/view/theme/app_theme.dart';
 import 'package:provider/provider.dart';
 
 class DownloadingScreen extends StatelessWidget {
@@ -12,102 +10,160 @@ class DownloadingScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.backgroundDark,
+      backgroundColor: const Color(0xFF1A1A1A),
       appBar: AppBar(
-        title: const Text('Downloading'),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        title: const Text(
+          'Downloading',
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+        ),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.more_vert),
+            icon: const Icon(Icons.more_vert, color: Colors.white),
             onPressed: () {},
           ),
         ],
       ),
-      body: LayoutBuilder(
-        builder: (context, constraints) {
+      body: Consumer<DownloadProvider>(
+        builder: (context, provider, child) {
           return SingleChildScrollView(
-            child: ConstrainedBox(
-              constraints: BoxConstraints(minHeight: constraints.maxHeight),
-              child: Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: Consumer<DownloadProvider>(
-                  builder: (context, provider, child) {
-                    if (!provider.isDownloading) {
-                      WidgetsBinding.instance.addPostFrameCallback((_) {
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const DownloadManagerScreen(),
-                          ),
-                        );
-                      });
-                    }
-                    return Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  const SizedBox(height: 40),
+                  SizedBox(
+                    width: 260,
+                    height: 260,
+                    child: Stack(
+                      alignment: Alignment.center,
                       children: [
-                        Column(
-                          children: [
-                            SizedBox(
-                              width: 250,
-                              height: 250,
-                              child: Stack(
-                                alignment: Alignment.center,
-                                children: [
-                                  SizedBox(
-                                    width: 250,
-                                    height: 250,
-                                    child: CircularProgressIndicator(
-                                      value: provider.progress / 100,
-                                      strokeWidth: 15,
-                                      backgroundColor: AppTheme.surfaceDark,
-                                      valueColor: const AlwaysStoppedAnimation<Color>(
-                                        AppTheme.primary,
-                                      ),
-                                    ),
-                                  ),
-                                  Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Text(
-                                        '${provider.progress.toStringAsFixed(0)}%',
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .displayMedium
-                                            ?.copyWith(fontWeight: FontWeight.bold),
-                                      ),
-                                      const Text(
-                                        'Downloading',
-                                        style: TextStyle(color: AppTheme.textSecondary),
-                                      )
-                                    ],
-                                  ),
-                                ],
+                        Container(
+                          width: 260,
+                          height: 260,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.greenAccent.withOpacity(0.4),
+                                blurRadius: 30,
+                                spreadRadius: 5,
                               ),
+                            ],
+                          ),
+                          child: CircularProgressIndicator(
+                            value: provider.progress,
+                            strokeWidth: 20,
+                            backgroundColor: Colors.grey.shade800.withOpacity(
+                              0.5,
                             ),
-                            const SizedBox(height: 40),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                _buildInfoCard(context, Icons.speed_rounded, provider.speed, 'Speed'),
-                                _buildInfoCard(context, Icons.timer_rounded, provider.remainingTime, 'Remaining'),
-                              ],
+                            valueColor: const AlwaysStoppedAnimation<Color>(
+                              Colors.greenAccent,
+                            ),
+                          ),
+                        ),
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            AnimatedSwitcher(
+                              duration: const Duration(milliseconds: 500),
+                              child: provider.isCompleted
+                                  ? _buildCompletedWidget()
+                                  : _buildProgressText(provider.progress),
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              provider.isCompleted
+                                  ? 'Completed'
+                                  : 'Downloading',
+                              style: const TextStyle(
+                                color: Colors.white70,
+                                fontSize: 18,
+                              ),
                             ),
                           ],
                         ),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 20.0),
-                          child: Column(
-                            children: [
-                              _buildFileCard(context, provider),
-                              const SizedBox(height: 40),
-                              _buildControls(context),
-                              const SizedBox(height: 20),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 50),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      _buildInfoCard(
+                        icon: Icons.speed_rounded,
+                        value: provider.speed,
+                        label: 'Speed',
+                      ),
+                      _buildInfoCard(
+                        icon: Icons.timelapse_rounded,
+                        value: provider.remainingTime,
+                        label: 'Remaining',
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 30),
+                  _buildFileInfoCard(
+                    title: videoInfo.title ?? 'Video File',
+                    progress: provider.progress,
+                    downloadedSize: provider.downloadedSize,
+                    totalSize: provider.totalSize,
+                  ),
+                  const SizedBox(height: 50),
+                  if (!provider.isCompleted)
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        IconButton(
+                          icon: const Icon(
+                            Icons.close,
+                            color: Colors.white,
+                            size: 35,
+                          ),
+                          onPressed: () => Navigator.of(context).pop(),
+                        ),
+                        const SizedBox(width: 50),
+                        Container(
+                          width: 80,
+                          height: 80,
+                          decoration: BoxDecoration(
+                            color: Colors.greenAccent,
+                            shape: BoxShape.circle,
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.greenAccent.withOpacity(0.5),
+                                blurRadius: 20,
+                                spreadRadius: 2,
+                              ),
                             ],
                           ),
-                        )
+                          child: IconButton(
+                            icon: Icon(
+                              provider.isPaused
+                                  ? Icons.play_arrow_rounded
+                                  : Icons.pause_rounded,
+                              color: Colors.black,
+                              size: 50,
+                            ),
+                            onPressed: () {
+                              if (provider.isPaused) {
+                                provider.resumeDownload();
+                              } else {
+                                provider.pauseDownload();
+                              }
+                            },
+                          ),
+                        ),
                       ],
-                    );
-                  },
-                ),
+                    ),
+                  const SizedBox(height: 40),
+                ],
               ),
             ),
           );
@@ -116,42 +172,106 @@ class DownloadingScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildInfoCard(
-      BuildContext context, IconData icon, String value, String label) {
+  Widget _buildProgressText(double progress) {
+    return Text(
+      '${(progress * 100).toStringAsFixed(0)}%',
+      key: const ValueKey('progress'),
+      style: const TextStyle(
+        color: Colors.white,
+        fontSize: 56,
+        fontWeight: FontWeight.bold,
+      ),
+    );
+  }
+
+  Widget _buildCompletedWidget() {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 20),
+      key: const ValueKey('completed'),
+      width: 120,
+      height: 120,
       decoration: BoxDecoration(
-        color: AppTheme.surfaceDark,
-        borderRadius: BorderRadius.circular(20),
+        color: Colors.green.withOpacity(0.2),
+        shape: BoxShape.circle,
+        border: Border.all(color: Colors.green, width: 3),
+      ),
+      child: const Icon(Icons.check_rounded, color: Colors.white, size: 80),
+    );
+  }
+
+  Widget _buildInfoCard({
+    required IconData icon,
+    required String value,
+    required String label,
+  }) {
+    return Container(
+      width: 150,
+      padding: const EdgeInsets.symmetric(vertical: 25, horizontal: 15),
+      decoration: BoxDecoration(
+        color: const Color(0xFF2C2C2E),
+        borderRadius: BorderRadius.circular(28),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.3),
+            blurRadius: 10,
+            spreadRadius: 1,
+          ),
+        ],
       ),
       child: Column(
         children: [
-          Icon(icon, color: AppTheme.primary, size: 28),
-          const SizedBox(height: 10),
-          Text(value, style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold)),
-          const SizedBox(height: 5),
-          Text(label, style: const TextStyle(color: AppTheme.textSecondary)),
+          Icon(icon, color: Colors.greenAccent, size: 35),
+          const SizedBox(height: 15),
+          Text(
+            value,
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            label,
+            style: const TextStyle(color: Colors.white70, fontSize: 16),
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildFileCard(BuildContext context, DownloadProvider provider) {
+  Widget _buildFileInfoCard({
+    required String title,
+    required double progress,
+    required String downloadedSize,
+    required String totalSize,
+  }) {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: AppTheme.surfaceDark,
-        borderRadius: BorderRadius.circular(20),
+        color: const Color(0xFF2C2C2E),
+        borderRadius: BorderRadius.circular(24),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.2),
+            blurRadius: 8,
+            spreadRadius: 1,
+          ),
+        ],
       ),
       child: Row(
         children: [
           Container(
-            padding: const EdgeInsets.all(15),
+            width: 60,
+            height: 60,
             decoration: BoxDecoration(
-              color: AppTheme.backgroundDark,
+              color: Colors.grey.shade700,
               borderRadius: BorderRadius.circular(15),
             ),
-            child: const Icon(Icons.music_note_rounded, color: Colors.white, size: 30),
+            child: const Icon(
+              Icons.music_note_rounded,
+              color: Colors.white,
+              size: 35,
+            ),
           ),
           const SizedBox(width: 20),
           Expanded(
@@ -159,53 +279,35 @@ class DownloadingScreen extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  videoInfo.metadata.title,
-                  style: const TextStyle(fontWeight: FontWeight.bold),
+                  title,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                  ),
+                  maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
-                const SizedBox(height: 10),
-                Text('${(provider.receivedBytes / (1024 * 1024)).toStringAsFixed(2)} MB / ${(provider.totalBytes / (1024 * 1024)).toStringAsFixed(2)} MB', style: const TextStyle(color: AppTheme.textSecondary)),
+                const SizedBox(height: 12),
+                Text(
+                  '$downloadedSize / $totalSize',
+                  style: const TextStyle(color: Colors.white70, fontSize: 14),
+                ),
                 const SizedBox(height: 10),
                 LinearProgressIndicator(
-                  value: provider.progress / 100,
-                  backgroundColor: AppTheme.backgroundDark,
-                  valueColor: const AlwaysStoppedAnimation<Color>(AppTheme.primary),
+                  value: progress,
+                  backgroundColor: Colors.grey.shade600,
+                  valueColor: const AlwaysStoppedAnimation<Color>(
+                    Colors.greenAccent,
+                  ),
+                  minHeight: 6,
+                  borderRadius: BorderRadius.circular(10),
                 ),
               ],
             ),
           ),
         ],
       ),
-    );
-  }
-
-  Widget _buildControls(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Container(
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            border: Border.all(color: AppTheme.textSecondary, width: 2),
-          ),
-          child: IconButton(
-            icon: const Icon(Icons.close_rounded, color: AppTheme.textSecondary, size: 30),
-            onPressed: () {},
-          ),
-        ),
-        const SizedBox(width: 30),
-        Container(
-          decoration: const BoxDecoration(
-            shape: BoxShape.circle,
-            color: AppTheme.primary,
-          ),
-          child: IconButton(
-            icon: const Icon(Icons.pause_rounded, color: Colors.black, size: 40),
-            onPressed: () {},
-            iconSize: 40,
-          ),
-        ),
-      ],
     );
   }
 }

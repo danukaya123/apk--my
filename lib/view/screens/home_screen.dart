@@ -23,9 +23,9 @@ class HomeScreen extends StatelessWidget {
             Text(
               'YouTube Video Downloader',
               style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                  ),
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+              ),
             ),
             const SizedBox(height: 10),
             const Text(
@@ -44,7 +44,10 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildUrlTextField(TextEditingController controller, BuildContext context) {
+  Widget _buildUrlTextField(
+    TextEditingController controller,
+    BuildContext context,
+  ) {
     return Container(
       decoration: BoxDecoration(
         color: AppTheme.surfaceDark,
@@ -63,11 +66,21 @@ class HomeScreen extends StatelessWidget {
         decoration: InputDecoration(
           hintText: 'Enter YouTube Video URL',
           hintStyle: const TextStyle(color: AppTheme.textSecondary),
-          prefixIcon: const Icon(Icons.link_rounded, color: AppTheme.primary, size: 28),
+          prefixIcon: const Icon(
+            Icons.link_rounded,
+            color: AppTheme.primary,
+            size: 28,
+          ),
           border: InputBorder.none,
-          contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 20,
+            vertical: 20,
+          ),
           suffixIcon: IconButton(
-            icon: const Icon(Icons.paste_rounded, color: AppTheme.textSecondary),
+            icon: const Icon(
+              Icons.paste_rounded,
+              color: AppTheme.textSecondary,
+            ),
             onPressed: () {
               // TODO: Implement paste functionality
             },
@@ -77,7 +90,10 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildDownloadButton(BuildContext context, TextEditingController controller) {
+  Widget _buildDownloadButton(
+    BuildContext context,
+    TextEditingController controller,
+  ) {
     final videoProvider = Provider.of<VideoProvider>(context);
 
     return SizedBox(
@@ -114,7 +130,11 @@ class HomeScreen extends StatelessWidget {
             : const Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.downloading_rounded, color: Colors.black, size: 28),
+                  Icon(
+                    Icons.downloading_rounded,
+                    color: Colors.black,
+                    size: 28,
+                  ),
                   SizedBox(width: 15),
                   Text(
                     'Fetch Video',
