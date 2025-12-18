@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Video Preview Screen</title>
+<link href="https://fonts.googleapis.com/css2?family=Spline+Sans:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#36e27b",
+                        "background-light": "#f6f8f7",
+                        "background-dark": "#112117",
+                        "surface-dark": "#1c2e24", // Custom surface color slightly lighter than background
+                        "surface-light": "#ffffff",
+                    },
+                    fontFamily: {
+                        "display": ["Spline Sans", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "1rem", "lg": "1.5rem", "xl": "2rem", "2xl": "2.5rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        /* Custom scrollbar hiding */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display text-gray-900 dark:text-white antialiased transition-colors duration-200">
+<div class="relative flex min-h-screen w-full flex-col mx-auto max-w-md shadow-2xl overflow-hidden bg-background-light dark:bg-background-dark">
+<!-- Sticky Header with Blur -->
+<div class="fixed top-0 left-0 right-0 z-50 flex items-center justify-between p-4 pt-12 bg-gradient-to-b from-black/60 to-transparent pointer-events-none">
+<button class="pointer-events-auto flex h-10 w-10 items-center justify-center rounded-full bg-black/20 backdrop-blur-md text-white hover:bg-black/40 transition-colors">
+<span class="material-symbols-outlined">arrow_back</span>
+</button>
+<button class="pointer-events-auto flex h-10 w-10 items-center justify-center rounded-full bg-black/20 backdrop-blur-md text-white hover:bg-black/40 transition-colors">
+<span class="material-symbols-outlined">share</span>
+</button>
+</div>
+<!-- Scrollable Content -->
+<div class="flex-1 overflow-y-auto pb-32 no-scrollbar">
+<!-- Hero Video Section -->
+<div class="relative w-full aspect-video group cursor-pointer">
+<div class="absolute inset-0 bg-cover bg-center" data-alt="lofi hip hop radio anime girl studying thumbnail" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCVW1tp403_WiWgXvda2cyHfn3RZdudFdjk--yq2yXpix9qaYSX_v4_OwqHNVAqtDFlppuG6cIk2JPu_z7hM8Us6rOh-OydHs2Fr_8c9wYuOH6_aSlpE5VmKs-aIgijSABgdN8i5NzoJqvfFXrTo4BuJGxsvZ937K6ZZ_woO6Vz5m-ht6zkDV8fzK31nwmyZeGwsNYFn_rvhMOvQMiY4ePr5OSS-1Zko2qKNZlWmpkHYM5YBoExyxTGeT5CQ8diWFhVpxujgu5PfQMa");'></div>
+<div class="absolute inset-0 bg-black/20 transition-opacity group-hover:bg-black/30"></div>
+<!-- Play Button Overlay -->
+<div class="absolute inset-0 flex items-center justify-center">
+<div class="flex h-16 w-16 items-center justify-center rounded-full bg-white/20 backdrop-blur-md border border-white/30 text-white shadow-lg transition-transform group-hover:scale-110">
+<span class="material-symbols-outlined text-4xl filled">play_arrow</span>
+</div>
+</div>
+</div>
+<!-- Content Container -->
+<div class="flex flex-col px-5 -mt-6 relative z-10">
+<!-- Metadata Card -->
+<div class="flex flex-col bg-surface-light dark:bg-surface-dark rounded-xl p-5 shadow-lg border border-gray-100 dark:border-gray-800">
+<!-- Title & Channel -->
+<h1 class="text-xl font-bold leading-tight tracking-tight mb-3 line-clamp-2">
+                        LOFI Hip Hop Radio - Beats to Relax/Study to
+                    </h1>
+<div class="flex items-center justify-between mb-4">
+<div class="flex items-center gap-2">
+<div class="h-8 w-8 rounded-full bg-gray-300 bg-cover bg-center" data-alt="Lofi Girl channel profile picture" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuB0UaiT_IRsKxQ-xtJxVjDqAbq9B1EhxTtZmI712P_IHuScuu7nYhxgVAn-v1KFLkbI8OUx6DgBNV9314wqYH1sGt6neIFn01LTkCxLWLpG0L3RuQN3F93Vlo9hKTFAOFzj4V_CpVbBXIPL9oXT9qlXJtaspAxpJ5y_ztH2S7_dwBsyO05xtUrr1NDoUdXd6dDdx5VsZJZG4Ok9daf3R0IgzyyjMrIZVrDJ8nM-b7V4zdDs1loHjLRQmSkC5cdbIc0i1bKJA_9n1wSz");'></div>
+<span class="text-sm font-medium text-gray-600 dark:text-gray-300">Lofi Girl</span>
+<span class="material-symbols-outlined text-[16px] text-blue-400 filled">verified</span>
+</div>
+</div>
+<!-- Stats Chips -->
+<div class="flex flex-wrap gap-2 mb-4">
+<div class="flex items-center gap-1.5 rounded-full bg-gray-100 dark:bg-white/5 px-3 py-1.5">
+<span class="material-symbols-outlined text-[18px] text-primary">visibility</span>
+<span class="text-xs font-medium opacity-80">2.4M Views</span>
+</div>
+<div class="flex items-center gap-1.5 rounded-full bg-gray-100 dark:bg-white/5 px-3 py-1.5">
+<span class="material-symbols-outlined text-[18px] text-primary">schedule</span>
+<span class="text-xs font-medium opacity-80">12:45</span>
+</div>
+</div>
+<!-- Accordion Description -->
+<details class="group">
+<summary class="flex cursor-pointer list-none items-center gap-2 text-sm font-medium text-primary hover:text-primary/80 transition-colors">
+<span>Show Description</span>
+<span class="material-symbols-outlined text-lg transition-transform group-open:rotate-180">expand_more</span>
+</summary>
+<div class="pt-3 text-sm text-gray-500 dark:text-gray-400 leading-relaxed">
+                            Listen to the best beats for studying, relaxing, and chilling out. Updated daily with new tracks from artists around the world. Join the community on Discord!
+                        </div>
+</details>
+</div>
+<!-- Format Selection Tabs -->
+<div class="mt-6 mb-4">
+<h3 class="text-sm font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3 px-1">Format</h3>
+<div class="flex p-1 bg-gray-200 dark:bg-black/40 rounded-full">
+<button class="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-full bg-surface-light dark:bg-surface-dark shadow-sm text-sm font-bold text-gray-900 dark:text-white transition-all">
+<span class="material-symbols-outlined text-[20px]">movie</span>
+                            Video (MP4)
+                        </button>
+<button class="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-full text-sm font-medium text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition-all">
+<span class="material-symbols-outlined text-[20px]">headphones</span>
+                            Audio (MP3)
+                        </button>
+</div>
+</div>
+<!-- Quality Selection Grid -->
+<div class="mb-6">
+<h3 class="text-sm font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3 px-1">Quality</h3>
+<div class="grid grid-cols-1 gap-3">
+<!-- 1080p Card (Selected) -->
+<label class="relative flex items-center justify-between p-4 rounded-xl bg-primary/10 border-2 border-primary cursor-pointer transition-all">
+<div class="flex items-center gap-4">
+<div class="flex h-10 w-10 items-center justify-center rounded-full bg-primary text-background-dark">
+<span class="material-symbols-outlined">hd</span>
+</div>
+<div class="flex flex-col">
+<span class="text-base font-bold text-gray-900 dark:text-white">1080p Full HD</span>
+<span class="text-xs text-primary font-medium">Recommended</span>
+</div>
+</div>
+<div class="text-right">
+<span class="block text-sm font-bold text-gray-900 dark:text-white">124 MB</span>
+<input checked="" class="h-5 w-5 text-primary border-gray-300 focus:ring-primary bg-transparent" name="quality" type="radio"/>
+</div>
+</label>
+<!-- 720p Card -->
+<label class="relative flex items-center justify-between p-4 rounded-xl bg-surface-light dark:bg-surface-dark border border-transparent hover:bg-gray-50 dark:hover:bg-white/5 cursor-pointer transition-all">
+<div class="flex items-center gap-4">
+<div class="flex h-10 w-10 items-center justify-center rounded-full bg-blue-500/20 text-blue-500">
+<span class="material-symbols-outlined">sd</span>
+</div>
+<div class="flex flex-col">
+<span class="text-base font-bold text-gray-900 dark:text-white">720p HD</span>
+</div>
+</div>
+<div class="text-right">
+<span class="block text-sm font-medium text-gray-500 dark:text-gray-400">86 MB</span>
+<input class="h-5 w-5 text-gray-400 border-gray-600 focus:ring-primary bg-transparent" name="quality" type="radio"/>
+</div>
+</label>
+<!-- 480p Card -->
+<label class="relative flex items-center justify-between p-4 rounded-xl bg-surface-light dark:bg-surface-dark border border-transparent hover:bg-gray-50 dark:hover:bg-white/5 cursor-pointer transition-all">
+<div class="flex items-center gap-4">
+<div class="flex h-10 w-10 items-center justify-center rounded-full bg-amber-500/20 text-amber-500">
+<span class="material-symbols-outlined">smartphone</span>
+</div>
+<div class="flex flex-col">
+<span class="text-base font-bold text-gray-900 dark:text-white">480p SD</span>
+</div>
+</div>
+<div class="text-right">
+<span class="block text-sm font-medium text-gray-500 dark:text-gray-400">42 MB</span>
+<input class="h-5 w-5 text-gray-400 border-gray-600 focus:ring-primary bg-transparent" name="quality" type="radio"/>
+</div>
+</label>
+<!-- 360p Card -->
+<label class="relative flex items-center justify-between p-4 rounded-xl bg-surface-light dark:bg-surface-dark border border-transparent hover:bg-gray-50 dark:hover:bg-white/5 cursor-pointer transition-all">
+<div class="flex items-center gap-4">
+<div class="flex h-10 w-10 items-center justify-center rounded-full bg-gray-500/20 text-gray-500 dark:text-gray-400">
+<span class="material-symbols-outlined">data_saver_on</span>
+</div>
+<div class="flex flex-col">
+<span class="text-base font-bold text-gray-900 dark:text-white">360p Low</span>
+</div>
+</div>
+<div class="text-right">
+<span class="block text-sm font-medium text-gray-500 dark:text-gray-400">18 MB</span>
+<input class="h-5 w-5 text-gray-400 border-gray-600 focus:ring-primary bg-transparent" name="quality" type="radio"/>
+</div>
+</label>
+</div>
+</div>
+</div>
+</div>
+<!-- Sticky Bottom Action Bar -->
+<div class="fixed bottom-0 left-0 right-0 p-5 bg-gradient-to-t from-background-light via-background-light to-transparent dark:from-background-dark dark:via-background-dark pt-12">
+<button class="w-full flex items-center justify-center gap-3 bg-gradient-to-r from-primary to-green-400 text-background-dark font-bold text-lg py-4 rounded-full shadow-[0_8px_20px_rgba(54,226,123,0.3)] hover:shadow-[0_12px_24px_rgba(54,226,123,0.4)] hover:scale-[1.02] active:scale-[0.98] transition-all">
+<span class="material-symbols-outlined text-2xl">download</span>
+                Download (124 MB)
+            </button>
+<!-- iOS Home Indicator Spacing -->
+<div class="h-1 w-1/3 mx-auto mt-4 rounded-full bg-gray-300 dark:bg-gray-700"></div>
+</div>
+</div>
+</body></html>

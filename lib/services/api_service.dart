@@ -65,7 +65,7 @@ class ApiService {
           ),
         );
     } catch (e) {
-      if (e is DioError) {
+      if (e is DioException) {
         throw Exception('Download failed: ${e.response?.data['message'] ?? e.message}');
       }
       throw Exception('Download failed: $e');

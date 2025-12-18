@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Download Progress Screen</title>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Spline+Sans:wght@300;400;500;600;700&amp;family=Noto+Sans:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Configuration -->
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#36e27b",
+                        "background-light": "#f6f8f7",
+                        "background-dark": "#112117",
+                        "surface-dark": "#1b3224",
+                        "surface-light": "#ffffff",
+                    },
+                    fontFamily: {
+                        "display": ["Spline Sans", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        /* Custom styles for circular progress */
+        .progress-ring__circle {
+            transition: stroke-dashoffset 0.35s;
+            transform: rotate(-90deg);
+            transform-origin: 50% 50%;
+        }
+        
+        .glass-panel {
+            background: rgba(27, 50, 36, 0.6);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .dark .glass-panel-dark {
+            background: rgba(27, 50, 36, 0.4);
+            border: 1px solid rgba(54, 226, 123, 0.1);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display antialiased transition-colors duration-300">
+<div class="relative flex min-h-screen w-full flex-col overflow-hidden max-w-md mx-auto shadow-2xl">
+<!-- Header -->
+<header class="flex items-center justify-between p-4 pt-6 z-10">
+<button class="flex size-10 items-center justify-center rounded-full text-background-dark dark:text-white hover:bg-black/5 dark:hover:bg-white/10 transition-colors">
+<span class="material-symbols-outlined">arrow_back</span>
+</button>
+<h1 class="text-lg font-bold text-background-dark dark:text-white">Downloading</h1>
+<button class="flex size-10 items-center justify-center rounded-full text-background-dark dark:text-white hover:bg-black/5 dark:hover:bg-white/10 transition-colors">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</header>
+<!-- Main Content -->
+<main class="flex-1 flex flex-col items-center justify-center px-6 relative z-10 gap-8 pb-12">
+<!-- Circular Progress Section -->
+<div class="relative flex items-center justify-center mt-4">
+<!-- Decorative glow -->
+<div class="absolute inset-0 bg-primary/20 blur-[60px] rounded-full scale-75"></div>
+<!-- SVG Circle -->
+<svg class="size-72" viewbox="0 0 100 100">
+<!-- Track -->
+<circle class="text-gray-200 dark:text-surface-dark stroke-current" cx="50" cy="50" fill="transparent" r="42" stroke-width="6"></circle>
+<!-- Indicator -->
+<circle class="text-primary progress-ring__circle stroke-current" cx="50" cy="50" fill="transparent" r="42" stroke-dasharray="263.89" stroke-dashoffset="92.36" stroke-linecap="round" stroke-width="6"></circle>
+</svg>
+<!-- Center Text -->
+<div class="absolute flex flex-col items-center justify-center">
+<span class="text-5xl font-bold text-background-dark dark:text-white tracking-tighter">65<span class="text-2xl text-primary">%</span></span>
+<span class="text-sm font-medium text-gray-500 dark:text-gray-400 mt-1">Downloading</span>
+</div>
+</div>
+<!-- Stats Grid -->
+<div class="grid grid-cols-2 gap-4 w-full max-w-[300px]">
+<div class="flex flex-col items-center p-3 rounded-2xl bg-white dark:bg-surface-dark shadow-sm border border-gray-100 dark:border-white/5">
+<span class="material-symbols-outlined text-primary mb-1 text-xl">speed</span>
+<span class="text-base font-bold text-background-dark dark:text-white">3.5 MB/s</span>
+<span class="text-xs text-gray-500 dark:text-gray-400">Speed</span>
+</div>
+<div class="flex flex-col items-center p-3 rounded-2xl bg-white dark:bg-surface-dark shadow-sm border border-gray-100 dark:border-white/5">
+<span class="material-symbols-outlined text-primary mb-1 text-xl">schedule</span>
+<span class="text-base font-bold text-background-dark dark:text-white">45s</span>
+<span class="text-xs text-gray-500 dark:text-gray-400">Remaining</span>
+</div>
+</div>
+<!-- File Info Card -->
+<div class="w-full">
+<div class="flex items-stretch gap-4 rounded-3xl bg-white dark:bg-surface-dark p-4 shadow-lg border border-gray-100 dark:border-white/5">
+<!-- Thumbnail -->
+<div class="relative w-20 shrink-0 overflow-hidden rounded-2xl bg-gray-200">
+<div class="absolute inset-0 bg-cover bg-center" data-alt="Abstract lofi hip hop study vibes background" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBmDtVyN9QW7yAvhtazZAlGvIb2GbOOBx6rSWV4VuR0-f9_h9XomM0a6c-iMUdTz2i_oNZ91YWR93xAs2x7fZZNqbrhWnVecgOz7uMZbCl-Np7CvboS_rAE8EdfD-l3F7ms8A2CO8rZHlWOxCg1Ztp_Giip5cwanQsSIU_SiHuvRUFGknjorBblKXu8gaJFvZNS70AzP6Zm2UqPoYEm14XngOT9oWtRzpzDT14Dhbi1WUUKVfG9WNxV2E1wWLx34frNW0qsbNer6vm7");'></div>
+<div class="absolute inset-0 bg-black/20 flex items-center justify-center">
+<span class="material-symbols-outlined text-white text-xl">music_note</span>
+</div>
+</div>
+<!-- Text Info -->
+<div class="flex flex-1 flex-col justify-center gap-1 min-w-0">
+<p class="truncate text-base font-bold text-background-dark dark:text-white leading-tight">Lofi Hip Hop Radio - Beats to Relax/Study to</p>
+<p class="text-xs font-medium text-gray-500 dark:text-[#95c6a9]">150 MB / 230 MB</p>
+<div class="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-gray-100 dark:bg-black/40">
+<div class="h-full w-[65%] rounded-full bg-primary"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- Control Buttons -->
+<div class="flex items-center gap-6 mt-2">
+<button class="flex size-14 items-center justify-center rounded-full bg-gray-200 dark:bg-white/10 text-gray-600 dark:text-white transition-transform active:scale-95 hover:bg-gray-300 dark:hover:bg-white/20">
+<span class="material-symbols-outlined text-2xl">close</span>
+</button>
+<button class="flex size-20 items-center justify-center rounded-full bg-primary text-background-dark shadow-[0_0_20px_rgba(54,226,123,0.4)] transition-transform active:scale-95 hover:scale-105">
+<span class="material-symbols-outlined text-4xl filled">pause</span>
+</button>
+</div>
+</main>
+<!-- Dynamic Island / Notification Preview -->
+<div class="w-full px-6 pb-8">
+<p class="text-xs uppercase tracking-wider font-bold text-gray-400 dark:text-gray-500 mb-4 text-center">Background Activity Preview</p>
+<!-- iOS Live Activity / Dynamic Island Style -->
+<div class="bg-black text-white rounded-[2.5rem] p-5 shadow-2xl border border-white/10 flex flex-col gap-4">
+<div class="flex items-center justify-between px-2">
+<div class="flex items-center gap-3">
+<div class="size-10 rounded-xl bg-gray-800 bg-cover bg-center" data-alt="Abstract colorful gradient thumbnail" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCf0uP4msDreP0cQJDmvG_ZZYcoJIsOUlAs4pzeArAh7Xm_vAC_3lp2yCyGfeEPSF02i-erKMSzaJj32WlwEgAatm485orVlRAQFdDQlmVEt8hPsPQuTFgD5P36ZVI2hga1gJzZoEA59VC26I1zdwenNuKewsESiIKKe-ACPy790FY3KR6ZVQ_jlxAGEyjW50TAAjs72xV1n_6mQj9RxorW61T72Mwr_Dt1BUmf2IvZbDkCf3_7BDhvy0tVk1u4rIvFmYAgyCU_bhIU');"></div>
+<div>
+<p class="text-sm font-semibold leading-tight">Quizontal</p>
+<p class="text-xs text-gray-400">Downloading video...</p>
+</div>
+</div>
+<div class="size-8 rounded-full border-2 border-primary/30 flex items-center justify-center border-t-primary animate-spin"></div>
+</div>
+<div class="flex items-center gap-3 px-1">
+<span class="text-xs font-mono text-primary">65%</span>
+<div class="h-2 flex-1 rounded-full bg-white/20 overflow-hidden">
+<div class="h-full w-[65%] rounded-full bg-primary shadow-[0_0_10px_#36e27b]"></div>
+</div>
+<span class="text-xs font-mono text-gray-400">-0:45</span>
+</div>
+</div>
+</div>
+</div>
+</body></html>

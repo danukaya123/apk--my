@@ -1,36 +1,29 @@
-
 import 'package:flutter/material.dart';
+import 'package:myapp/providers/download_provider.dart';
+import 'package:myapp/providers/video_provider.dart';
+import 'package:myapp/view/screens/onboard_screen.dart';
+import 'package:myapp/view/theme/app_theme.dart';
 import 'package:provider/provider.dart';
-import 'providers/video_provider.dart';
-import 'providers/download_provider.dart';
-import 'view/screens/home_screen.dart';
-import 'view/screens/downloading_screen.dart';
-import 'view/screens/settings_screen.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => VideoProvider()),
-        ChangeNotifierProvider(create: (_) => DownloadProvider()),
+        ChangeNotifierProvider(create: (context) => VideoProvider()),
+        ChangeNotifierProvider(create: (context) => DownloadProvider()),
       ],
       child: MaterialApp(
         title: 'YouTube Downloader',
-        theme: ThemeData(
-          primarySwatch: Colors.red,
-          visualDensity: VisualDensity.adaptivePlatformDensity,
-        ),
-        initialRoute: '/',
-        routes: {
-          '/': (context) => HomeScreen(),
-          '/downloading': (context) => DownloadingScreen(),
-          '/settings': (context) => SettingsScreen(),
-        },
+        theme: appTheme,
+        home: const OnBoardScreen(),
+        debugShowCheckedModeBanner: false,
       ),
     );
   }

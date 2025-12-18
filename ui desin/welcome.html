@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Quizontal YouTube Downloader</title>
+<!-- Google Fonts: Spline Sans -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Spline+Sans:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS with Config -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#36e27b",
+                        "background-light": "#f6f8f7",
+                        "background-dark": "#112117",
+                        "surface-dark": "#1a2e22",
+                        "surface-light": "#ffffff",
+                    },
+                    fontFamily: {
+                        "display": ["Spline Sans", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "1rem", 
+                        "lg": "1.5rem", 
+                        "xl": "2rem", 
+                        "2xl": "2.5rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        /* Custom scrollbar hiding for horizontal scroll areas */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-white antialiased selection:bg-primary selection:text-black pb-24">
+<!-- Top App Bar -->
+<header class="sticky top-0 z-40 bg-background-light/90 dark:bg-background-dark/90 backdrop-blur-md border-b border-black/5 dark:border-white/5 transition-colors duration-300">
+<div class="flex items-center justify-between px-4 py-3">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-background-dark shadow-[0_0_15px_rgba(54,226,123,0.3)]">
+<span class="material-symbols-outlined text-[20px] font-bold">download</span>
+</div>
+<h2 class="text-xl font-bold tracking-tight">Quizontal</h2>
+</div>
+<button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-black/5 dark:hover:bg-white/5 active:scale-95 transition-all">
+<span class="material-symbols-outlined text-2xl">notifications</span>
+</button>
+</div>
+</header>
+<!-- Search Section -->
+<section class="px-4 py-4 sticky top-[60px] z-30 bg-background-light dark:bg-background-dark">
+<label class="group flex w-full items-center rounded-2xl h-14 bg-white dark:bg-surface-dark shadow-sm border border-transparent focus-within:border-primary/50 focus-within:ring-2 focus-within:ring-primary/20 transition-all overflow-hidden">
+<div class="flex items-center justify-center pl-4 text-slate-400 dark:text-slate-500 group-focus-within:text-primary transition-colors">
+<span class="material-symbols-outlined text-[24px]">search</span>
+</div>
+<input class="flex-1 w-full h-full bg-transparent border-none text-base font-medium px-3 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:ring-0" placeholder="Search or paste YouTube URL" type="text"/>
+<button class="pr-2">
+<div class="flex items-center justify-center h-10 w-10 rounded-xl bg-slate-100 dark:bg-[#254632] text-slate-600 dark:text-primary">
+<span class="material-symbols-outlined text-[20px]">content_paste</span>
+</div>
+</button>
+</label>
+</section>
+<!-- Quick Actions -->
+<section class="mt-2">
+<div class="flex gap-4 px-4 overflow-x-auto no-scrollbar pb-2">
+<!-- Action 1 -->
+<button class="flex flex-col items-center gap-2 min-w-[72px] group">
+<div class="w-16 h-16 rounded-2xl bg-white dark:bg-surface-dark flex items-center justify-center text-primary shadow-sm group-active:scale-95 transition-transform border border-transparent dark:border-white/5">
+<span class="material-symbols-outlined text-[28px]">link</span>
+</div>
+<span class="text-xs font-medium text-slate-600 dark:text-slate-400">Paste Link</span>
+</button>
+<!-- Action 2 -->
+<button class="flex flex-col items-center gap-2 min-w-[72px] group">
+<div class="w-16 h-16 rounded-2xl bg-white dark:bg-surface-dark flex items-center justify-center text-primary shadow-sm group-active:scale-95 transition-transform border border-transparent dark:border-white/5">
+<span class="material-symbols-outlined text-[28px]">music_note</span>
+</div>
+<span class="text-xs font-medium text-slate-600 dark:text-slate-400">MP3 Only</span>
+</button>
+<!-- Action 3 -->
+<button class="flex flex-col items-center gap-2 min-w-[72px] group">
+<div class="w-16 h-16 rounded-2xl bg-white dark:bg-surface-dark flex items-center justify-center text-primary shadow-sm group-active:scale-95 transition-transform border border-transparent dark:border-white/5">
+<span class="material-symbols-outlined text-[28px]">playlist_play</span>
+</div>
+<span class="text-xs font-medium text-slate-600 dark:text-slate-400">Playlist</span>
+</button>
+<!-- Action 4 -->
+<button class="flex flex-col items-center gap-2 min-w-[72px] group">
+<div class="w-16 h-16 rounded-2xl bg-white dark:bg-surface-dark flex items-center justify-center text-primary shadow-sm group-active:scale-95 transition-transform border border-transparent dark:border-white/5">
+<span class="material-symbols-outlined text-[28px]">history</span>
+</div>
+<span class="text-xs font-medium text-slate-600 dark:text-slate-400">History</span>
+</button>
+<!-- Action 5 -->
+<button class="flex flex-col items-center gap-2 min-w-[72px] group">
+<div class="w-16 h-16 rounded-2xl bg-white dark:bg-surface-dark flex items-center justify-center text-primary shadow-sm group-active:scale-95 transition-transform border border-transparent dark:border-white/5">
+<span class="material-symbols-outlined text-[28px]">settings</span>
+</div>
+<span class="text-xs font-medium text-slate-600 dark:text-slate-400">More</span>
+</button>
+</div>
+</section>
+<!-- Recent Downloads Header -->
+<div class="px-4 pt-6 pb-2 flex items-center justify-between">
+<h3 class="text-lg font-bold leading-tight tracking-tight text-slate-900 dark:text-white">Recent Downloads</h3>
+<button class="text-xs font-semibold text-primary hover:text-primary/80 transition-colors">View All</button>
+</div>
+<!-- Image Grid (Downloads) -->
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4 px-4 pb-4">
+<!-- Card 1: Completed -->
+<div class="group relative flex flex-col gap-3 p-3 bg-white dark:bg-surface-dark rounded-2xl shadow-sm border border-transparent dark:border-white/5 hover:border-primary/30 transition-all">
+<div class="relative w-full aspect-video rounded-xl overflow-hidden">
+<div class="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-105" data-alt="Lo-fi hip hop girl studying at a desk with headphones" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAQ48njoLXMI8z4aceZ0LlXUUo2ultoIGs1IfdH9Uosmx6GZKoItPLRMDaQtnxujFgIkUe7iOCrkMHBF_QhOvSK7rkyf0f5iD4GEZnpAiouxg6F7Yl8VMSZg8dXRBOfMS25wGyWRMBkqh1upnpMJkG_foyujNpI2MlevptYd5SpB2g6RbTx4aXoKaDQzi0mnoRgKPeEAy2vi0hsJ6KkdakDMEFqzZ9__6u0CUDTIwU9fDYGtDAepvAEWqEEcbWAbLAAK0HsCuG2gSFc");'></div>
+<div class="absolute bottom-2 right-2 bg-black/70 backdrop-blur-sm px-1.5 py-0.5 rounded text-[10px] font-bold text-white">4:20</div>
+</div>
+<div class="flex flex-col gap-1">
+<div class="flex justify-between items-start">
+<p class="text-slate-900 dark:text-white text-sm font-bold leading-snug line-clamp-2">Lofi Hip Hop Radio - Beats to Relax/Study to</p>
+<button class="text-slate-400 hover:text-white"><span class="material-symbols-outlined text-[20px]">more_vert</span></button>
+</div>
+<div class="flex items-center gap-2 mt-1">
+<span class="material-symbols-outlined text-primary text-[16px]">check_circle</span>
+<p class="text-slate-500 dark:text-slate-400 text-xs font-medium">45MB • MP4</p>
+</div>
+</div>
+</div>
+<!-- Card 2: Downloading -->
+<div class="group relative flex flex-col gap-3 p-3 bg-white dark:bg-surface-dark rounded-2xl shadow-sm border border-transparent dark:border-white/5 hover:border-primary/30 transition-all">
+<div class="relative w-full aspect-video rounded-xl overflow-hidden">
+<div class="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-105" data-alt="Futuristic technology concept with blue glowing circuits" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBfN-POyv2CREryFadhWwEixthXH3xJwxZxGWfmuHZnfs45Fe3OuGecm9M1aSnT50cyXECEVLBHNcGbIeVlQWpcqEdlqIzEYKtGM3MdNyXRIgaLlqqW1em4jnqx1N1t2kd3TNacZ8tq8Z5aGcF9dUbpnQfk3gyaC7EL3R2C-NELJTy7nTm98041a8bR2NiJJoZwH05OQn-VfpVtZKO2NnsEPFtcJ3yjWoIlZNHpdKCpIc44I4bdjGiw2FdYqdXYooEcJUjt9R_L-WIS");'></div>
+<div class="absolute inset-0 bg-black/40 flex items-center justify-center">
+<div class="w-10 h-10 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center text-white">
+<span class="material-symbols-outlined">pause</span>
+</div>
+</div>
+</div>
+<div class="flex flex-col gap-1">
+<div class="flex justify-between items-start">
+<p class="text-slate-900 dark:text-white text-sm font-bold leading-snug line-clamp-2">Tech Review 2024: The Future of AI</p>
+<button class="text-slate-400 hover:text-white"><span class="material-symbols-outlined text-[20px]">more_vert</span></button>
+</div>
+<div class="mt-2 w-full h-1.5 bg-slate-100 dark:bg-black/40 rounded-full overflow-hidden">
+<div class="h-full bg-primary w-[45%] rounded-full"></div>
+</div>
+<div class="flex justify-between items-center mt-1">
+<p class="text-primary text-xs font-medium">45% Downloading...</p>
+<p class="text-slate-500 dark:text-slate-400 text-[10px]">2.5MB/s</p>
+</div>
+</div>
+</div>
+<!-- Card 3: Waiting -->
+<div class="group relative flex flex-col gap-3 p-3 bg-white dark:bg-surface-dark rounded-2xl shadow-sm border border-transparent dark:border-white/5 hover:border-primary/30 transition-all">
+<div class="relative w-full aspect-video rounded-xl overflow-hidden grayscale opacity-70">
+<div class="absolute inset-0 bg-cover bg-center" data-alt="Close up of green leaves in a dense forest" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDQXQxi9d1U0wUBDN96QAQHGE2AJY3w4wheHkMVsH_VF64ijhYvf6sX7lnjInYN34pPXaeDR_YCmzmYvd_eD0WrjKJD8hufaCZ9BiVePsIhGaGsFV5OXutcvFxDKZDTDTo3NRS2CQuTrNU0yWVGUBefQsJYo8p5d1-Ehub03D4pgPUg_ku4uDw-NvJBzZaC7KQCIo-k5nRYTvyUrCK0CRrXIRubOMl2ZNNHhrfqBoMgaU5Uvyca5Vy8t5JLypirOElWPJlLYx4yUVPm");'></div>
+<div class="absolute inset-0 flex items-center justify-center">
+<span class="material-symbols-outlined text-white text-3xl drop-shadow-lg">hourglass_empty</span>
+</div>
+</div>
+<div class="flex flex-col gap-1">
+<div class="flex justify-between items-start">
+<p class="text-slate-900 dark:text-white text-sm font-bold leading-snug line-clamp-2">Planet Earth III - Official Trailer</p>
+<button class="text-slate-400 hover:text-white"><span class="material-symbols-outlined text-[20px]">more_vert</span></button>
+</div>
+<div class="flex items-center gap-2 mt-1">
+<p class="text-slate-500 dark:text-slate-400 text-xs font-medium">Waiting in queue...</p>
+</div>
+</div>
+</div>
+<!-- Card 4: Completed -->
+<div class="group relative flex flex-col gap-3 p-3 bg-white dark:bg-surface-dark rounded-2xl shadow-sm border border-transparent dark:border-white/5 hover:border-primary/30 transition-all">
+<div class="relative w-full aspect-video rounded-xl overflow-hidden">
+<div class="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-105" data-alt="Esports tournament stage with colorful lights and gaming monitors" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuB--yElzR_bwli2rmkxrln0i3PKsvj5-HF6ekcmcoRDe2LPbRdfanJRNcrGVWByVOCfbwCO7F2UQckuWVgus2ytTeR8sUC9nMVN91y3EfV7lzF1jJnaZK-Pb2uwdC-aIoaV0SG2GG8yn4ib_aSpZR5VA2cM09_fdOULSVvVxmeaAYOf4Hg6kIaOaRMpjaZfOqpqPeWcaFBBSp5aOVgMwKtPeNWWvQwB-q7UoNlUL0HcvfBW6Zi-XMGhtIneQ0Al7TEbc4yfS8XhCNCy");'></div>
+<div class="absolute bottom-2 right-2 bg-black/70 backdrop-blur-sm px-1.5 py-0.5 rounded text-[10px] font-bold text-white">12:05</div>
+</div>
+<div class="flex flex-col gap-1">
+<div class="flex justify-between items-start">
+<p class="text-slate-900 dark:text-white text-sm font-bold leading-snug line-clamp-2">Gaming Highlights #42 - Best Plays</p>
+<button class="text-slate-400 hover:text-white"><span class="material-symbols-outlined text-[20px]">more_vert</span></button>
+</div>
+<div class="flex items-center gap-2 mt-1">
+<span class="material-symbols-outlined text-primary text-[16px]">check_circle</span>
+<p class="text-slate-500 dark:text-slate-400 text-xs font-medium">128MB • MP4</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Floating Action Button (FAB) -->
+<div class="fixed bottom-24 right-4 z-40">
+<button class="flex items-center justify-center w-14 h-14 bg-primary rounded-2xl text-background-dark shadow-[0_4px_20px_rgba(54,226,123,0.4)] hover:scale-105 active:scale-95 transition-all">
+<span class="material-symbols-outlined text-3xl font-bold">add</span>
+</button>
+</div>
+<!-- Bottom Navigation -->
+<nav class="fixed bottom-0 w-full z-50 bg-white/90 dark:bg-surface-dark/90 backdrop-blur-lg border-t border-slate-200 dark:border-white/5 pb-5 pt-3 px-6">
+<div class="flex justify-between items-center max-w-md mx-auto">
+<button class="flex flex-col items-center gap-1 text-primary w-16">
+<span class="material-symbols-outlined text-[26px] font-variation-settings-fill">home</span>
+<span class="text-[10px] font-medium">Home</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 w-16 transition-colors">
+<span class="material-symbols-outlined text-[26px]">folder</span>
+<span class="text-[10px] font-medium">Files</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 w-16 transition-colors">
+<span class="material-symbols-outlined text-[26px]">settings</span>
+<span class="text-[10px] font-medium">Settings</span>
+</button>
+</div>
+</nav>
+<script>
+        // Simple logic to add filled style to active icons if needed
+        const navButtons = document.querySelectorAll('nav button');
+        navButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                navButtons.forEach(b => {
+                    b.classList.remove('text-primary');
+                    b.classList.add('text-slate-400');
+                    const icon = b.querySelector('.material-symbols-outlined');
+                    if(icon) icon.style.fontVariationSettings = "'FILL' 0";
+                });
+                btn.classList.add('text-primary');
+                btn.classList.remove('text-slate-400');
+                const activeIcon = btn.querySelector('.material-symbols-outlined');
+                if(activeIcon) activeIcon.style.fontVariationSettings = "'FILL' 1";
+            });
+        });
+    </script>
+</body></html>

@@ -6,7 +6,7 @@ class DownloadItem extends StatelessWidget {
   final String subtitle;
   final double? progress;
 
-  const DownloadItem({
+  const DownloadItem({super.key, 
     required this.title,
     required this.subtitle,
     this.progress,

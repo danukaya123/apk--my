@@ -71,12 +71,14 @@ class DownloadFormat {
   final int? size;
   final int qualityNumber;
   final String filename;
+  final String? url;
 
   DownloadFormat({
     required this.quality,
     this.size,
     required this.qualityNumber,
     required this.filename,
+    this.url,
   });
 
   factory DownloadFormat.fromJson(Map<String, dynamic> json) {
@@ -85,6 +87,7 @@ class DownloadFormat {
       size: _parseInt(json['size']),
       qualityNumber: _parseInt(json['qualityNumber']) ?? 0,
       filename: json['filename'] ?? '',
+      url: json['url'],
     );
   }
 }

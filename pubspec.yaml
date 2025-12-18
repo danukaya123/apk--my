@@ -36,7 +36,6 @@ dependencies:
   cupertino_icons: ^1.0.8
   http: ^1.6.0
   provider: ^6.1.5+1
-  dio: ^5.9.0
   path_provider: ^2.1.5
   lucide_flutter: ^0.561.0
   google_fonts: ^6.3.3
@@ -44,6 +43,11 @@ dependencies:
   flutter_local_notifications: ^19.5.0
   path_provider_android: ^2.2.22
   flutter_file_downloader: ^2.1.1
+  video_player: ^2.10.1
+  intl: ^0.20.2
+  open_file: ^3.5.10
+  permission_handler: ^12.0.1
+  dio: ^5.9.0
 
 dev_dependencies:
   flutter_test:
