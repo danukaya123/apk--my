@@ -1,11 +1,13 @@
 import 'package:dio/dio.dart';
 import '../models/video_info.dart';
+import 'downloader_service.dart';
 
-class ApiService {
+class YoutubeDownloaderService implements DownloaderService {
   static const String _baseUrl = 'https://yt-web-six.vercel.app/api/api';
   final Dio _dio = Dio();
 
-  Future<VideoInfo> fetchVideoInfo(String videoUrl) async {
+  @override
+  Future<VideoInfo> getVideoInfo(String videoUrl) async {
     try {
       final response = await _dio.get(
         _baseUrl,
@@ -23,57 +25,19 @@ class ApiService {
     }
   }
 
-  Future<String> getDownloadUrl(
-    String type,
-    int quality,
-    String q,
-    String filename,
-  ) async {
-    try {
-      final downloadUrlResponse = await _dio.get(
-        _baseUrl,
-        queryParameters: {
-          'action': 'download',
-          'type': type,
-          'quality': quality,
-          'q': q,
-        },
-      );
-
-      if (downloadUrlResponse.statusCode == 200 &&
-          downloadUrlResponse.data['ok'] == true) {
-        final downloadUrl = downloadUrlResponse.data['url'];
-        final proxyUrl =
-            '$_baseUrl?action=proxy&url=${Uri.encodeComponent(downloadUrl)}&filename=${Uri.encodeComponent(filename)}';
-        return proxyUrl;
-      } else {
-        throw Exception(
-          'Failed to get download URL: ${downloadUrlResponse.data['message']}',
-        );
-      }
-    } catch (e) {
-      throw Exception('Failed to get download URL: $e');
-    }
-  }
-
+  @override
   Future<void> downloadVideo(
     String type,
-    int quality,
-    String q,
+    String url,
+    String filename,
     String savePath, {
     Function(int, int)? onReceiveProgress,
   }) async {
     try {
-      final downloadUrl = await getDownloadUrl(
-        type,
-        quality,
-        q,
-        savePath.split('/').last,
-      );
-
+      final downloadUrl = await _getDownloadUrl(type, url, filename);
       await _dio.download(
         downloadUrl,
-        savePath, // Use the provided savePath directly
+        savePath,
         onReceiveProgress: onReceiveProgress,
         options: Options(
           headers: {
@@ -92,6 +56,37 @@ class ApiService {
         );
       }
       throw Exception('Download failed: $e');
+    }
+  }
+
+  Future<String> _getDownloadUrl(
+      String type, String q, String filename) async {
+    try {
+      final downloadUrlResponse = await _dio.get(
+        _baseUrl,
+        queryParameters: {
+          'action': 'download',
+          'type': type,
+          // The quality parameter is not used in the new DownloaderService interface,
+          // so we pass a default value.
+          'quality': 720,
+          'q': q,
+        },
+      );
+
+      if (downloadUrlResponse.statusCode == 200 &&
+          downloadUrlResponse.data['ok'] == true) {
+        final downloadUrl = downloadUrlResponse.data['url'];
+        final proxyUrl =
+            '$_baseUrl?action=proxy&url=${Uri.encodeComponent(downloadUrl)}&filename=${Uri.encodeComponent(filename)}';
+        return proxyUrl;
+      } else {
+        throw Exception(
+          'Failed to get download URL: ${downloadUrlResponse.data['message']}',
+        );
+      }
+    } catch (e) {
+      throw Exception('Failed to get download URL: $e');
     }
   }
 }

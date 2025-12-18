@@ -87,30 +87,32 @@ class DownloadingScreen extends StatelessWidget {
                     child: Stack(
                       alignment: Alignment.center,
                       children: [
+                        // Decorative glow
                         Container(
-                          width: 260,
-                          height: 260,
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
                             boxShadow: [
                               BoxShadow(
-                                color: Colors.greenAccent.withOpacity(0.4),
-                                blurRadius: 30,
-                                spreadRadius: 5,
+                                color: const Color(0xFF36e27b).withOpacity(0.2),
+                                blurRadius: 60,
                               ),
                             ],
                           ),
+                        ),
+                        // Progress Indicator
+                        SizedBox(
+                          width: 220,
+                          height: 220,
                           child: CircularProgressIndicator(
                             value: provider.progress,
-                            strokeWidth: 20,
-                            backgroundColor: Colors.grey.shade800.withOpacity(
-                              0.5,
-                            ),
+                            strokeWidth: 12,
+                            backgroundColor: const Color(0xFF1b3224),
                             valueColor: const AlwaysStoppedAnimation<Color>(
-                              Colors.greenAccent,
-                            ),
+                                Color(0xFF36e27b)),
+                            strokeCap: StrokeCap.round,
                           ),
                         ),
+                        // Center Text
                         Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
@@ -122,12 +124,10 @@ class DownloadingScreen extends StatelessWidget {
                             ),
                             const SizedBox(height: 8),
                             Text(
-                              provider.isCompleted
-                                  ? 'Completed'
-                                  : 'Downloading',
-                              style: const TextStyle(
-                                color: Colors.white70,
-                                fontSize: 18,
+                              provider.isCompleted ? 'Completed' : 'Downloading',
+                              style: TextStyle(
+                                color: Colors.white.withOpacity(0.6),
+                                fontSize: 16,
                               ),
                             ),
                           ],
@@ -145,18 +145,29 @@ class DownloadingScreen extends StatelessWidget {
                         label: 'Speed',
                       ),
                       _buildInfoCard(
-                        icon: Icons.timelapse_rounded,
-                        value: provider.remainingTime,
-                        label: 'Remaining',
+                        icon: provider.isCompleted
+                            ? Icons.storage_rounded
+                            : Icons.timelapse_rounded,
+                        value: provider.isCompleted
+                            ? provider.totalSize
+                            : provider.remainingTime,
+                        label: provider.isCompleted ? 'Size' : 'Remaining',
                       ),
                     ],
                   ),
                   const SizedBox(height: 30),
-                  _buildFileInfoCard(
-                    title: videoInfo.title ?? 'Video File',
-                    progress: provider.progress,
-                    downloadedSize: provider.downloadedSize,
-                    totalSize: provider.totalSize,
+                  AnimatedSwitcher(
+                    duration: const Duration(milliseconds: 500),
+                    child: provider.isCompleted
+                        ? _buildCompletedFileCard(
+                            videoInfo: videoInfo,
+                          )
+                        : _buildFileInfoCard(
+                            title: videoInfo.metadata.title,
+                            progress: provider.progress,
+                            downloadedSize: provider.downloadedSize,
+                            totalSize: provider.totalSize,
+                          ),
                   ),
                   const SizedBox(height: 50),
                   if (!provider.isCompleted)
@@ -176,11 +187,11 @@ class DownloadingScreen extends StatelessWidget {
                           width: 80,
                           height: 80,
                           decoration: BoxDecoration(
-                            color: Colors.greenAccent,
+                            color: const Color(0xFF36e27b),
                             shape: BoxShape.circle,
                             boxShadow: [
                               BoxShadow(
-                                color: Colors.greenAccent.withOpacity(0.5),
+                                color: const Color(0xFF36e27b).withOpacity(0.5),
                                 blurRadius: 20,
                                 spreadRadius: 2,
                               ),
@@ -216,13 +227,32 @@ class DownloadingScreen extends StatelessWidget {
   }
 
   Widget _buildProgressText(double progress) {
-    return Text(
-      '${(progress * 100).toStringAsFixed(0)}%',
+    return RichText(
       key: const ValueKey('progress'),
-      style: const TextStyle(
-        color: Colors.white,
-        fontSize: 56,
-        fontWeight: FontWeight.bold,
+      textAlign: TextAlign.center,
+      text: TextSpan(
+        style: const TextStyle(
+          color: Colors.white,
+          fontFamily: 'Spline Sans',
+        ),
+        children: [
+          TextSpan(
+            text: (progress * 100).toStringAsFixed(0),
+            style: const TextStyle(
+              fontSize: 56,
+              fontWeight: FontWeight.bold,
+              letterSpacing: -2,
+            ),
+          ),
+          const TextSpan(
+            text: '%',
+            style: TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+              color: Color(0xFF36e27b),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -262,7 +292,7 @@ class DownloadingScreen extends StatelessWidget {
       ),
       child: Column(
         children: [
-          Icon(icon, color: Colors.greenAccent, size: 35),
+          Icon(icon, color: const Color(0xFF36e27b), size: 35),
           const SizedBox(height: 15),
           Text(
             value,
@@ -303,17 +333,22 @@ class DownloadingScreen extends StatelessWidget {
       ),
       child: Row(
         children: [
-          Container(
-            width: 60,
-            height: 60,
-            decoration: BoxDecoration(
-              color: Colors.grey.shade700,
-              borderRadius: BorderRadius.circular(15),
-            ),
-            child: const Icon(
-              Icons.music_note_rounded,
-              color: Colors.white,
-              size: 35,
+          ClipRRect(
+            borderRadius: BorderRadius.circular(15.0),
+            child: Image.network(
+              videoInfo.metadata.thumbnail,
+              width: 60,
+              height: 60,
+              fit: BoxFit.cover,
+              errorBuilder: (context, error, stack) => Container(
+                width: 60,
+                height: 60,
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade700,
+                  borderRadius: BorderRadius.circular(15),
+                ),
+                child: const Icon(Icons.videocam_off_rounded, color: Colors.white, size: 35),
+              ),
             ),
           ),
           const SizedBox(width: 20),
@@ -341,10 +376,81 @@ class DownloadingScreen extends StatelessWidget {
                   value: progress,
                   backgroundColor: Colors.grey.shade600,
                   valueColor: const AlwaysStoppedAnimation<Color>(
-                    Colors.greenAccent,
+                    Color(0xFF36e27b),
                   ),
                   minHeight: 6,
                   borderRadius: BorderRadius.circular(10),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCompletedFileCard({
+    required VideoInfo videoInfo,
+  }) {
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: const Color(0xFF2C2C2E),
+        borderRadius: BorderRadius.circular(24),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.2),
+            blurRadius: 8,
+            spreadRadius: 1,
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          ClipRRect(
+            borderRadius: BorderRadius.circular(15.0),
+            child: Image.network(
+              videoInfo.metadata.thumbnail,
+              width: 60,
+              height: 60,
+              fit: BoxFit.cover,
+              errorBuilder: (context, error, stack) => Container(
+                width: 60,
+                height: 60,
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade700,
+                  borderRadius: BorderRadius.circular(15),
+                ),
+                child: const Icon(Icons.check_circle_outline_rounded, color: Color(0xFF36e27b), size: 35),
+              ),
+            ),
+          ),
+          const SizedBox(width: 20),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  videoInfo.metadata.title,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                const SizedBox(height: 12),
+                const Text(
+                  'Download Complete',
+                  style: TextStyle(color: Color(0xFF36e27b), fontSize: 14),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                const SizedBox(height: 10),
+                const Text(
+                  'Saved to Downloads folder',
+                  style: TextStyle(color: Colors.white70, fontSize: 12),
                 ),
               ],
             ),

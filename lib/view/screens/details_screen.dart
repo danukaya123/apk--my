@@ -133,10 +133,10 @@ class _DetailsScreenState extends State<DetailsScreen> {
             child: DownloadButton(
               selectedQuality: _selectedQuality,
               onPressed: () {
-                if (_selectedQuality != null && _selectedQuality!.url != null) {
-                  downloadProvider.downloadFile(
-                    _selectedQuality!.url!,
-                    _selectedQuality!.filename,
+                if (_selectedQuality != null && videoProvider.videoInfo != null) {
+                  downloadProvider.startDownload(
+                    videoProvider.videoInfo!,
+                    _selectedFormat == 'video' ? 'mp4' : 'mp3',
                   );
                   Navigator.push(
                     context,

@@ -1,8 +1,8 @@
 import 'dart:async';
-import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_file_downloader/flutter_file_downloader.dart';
-import 'package:dio/dio.dart';
+import 'package:myapp/models/video_info.dart';
+import 'dart:math';
 
 class DownloadProvider with ChangeNotifier {
   double _progress = 0;
@@ -13,8 +13,12 @@ class DownloadProvider with ChangeNotifier {
   int _totalBytes = 0;
   int _receivedBytes = 0;
 
+  final List<String> _downloadedVideos = [];
+
   final Stopwatch _stopwatch = Stopwatch();
   Timer? _timer;
+
+  DownloadProvider();
 
   double get progress => _progress;
   bool get isDownloading => _isDownloading;
@@ -23,7 +27,11 @@ class DownloadProvider with ChangeNotifier {
   String get remainingTime => _remainingTime;
   String get totalSize => _formatBytes(_totalBytes);
   String get downloadedSize => _formatBytes(_receivedBytes);
-  bool get isPaused => false; // Pausing is not implemented
+  List<String> get downloadedVideos => _downloadedVideos;
+  bool get isPaused => false;
+
+  Map<String, double> get downloadProgress =>
+      _isDownloading ? {'current': _progress} : {};
 
   String _formatBytes(int bytes) {
     if (bytes <= 0) return "0 B";
@@ -32,11 +40,7 @@ class DownloadProvider with ChangeNotifier {
     return '${(bytes / pow(1024, i)).toStringAsFixed(2)} ${suffixes[i]}';
   }
 
-  void downloadFile(String url, String filename) {
-    startDownload(filename, url);
-  }
-
-  Future<void> startDownload(String title, String url) async {
+  Future<void> startDownload(VideoInfo videoInfo, String format) async {
     _isDownloading = true;
     _isCompleted = false;
     _progress = 0;
@@ -44,62 +48,69 @@ class DownloadProvider with ChangeNotifier {
     _totalBytes = 0;
     _speed = '0 KB/s';
     _remainingTime = '...';
-    notifyListeners(); // Notify UI that we are starting
+    notifyListeners();
 
     _stopwatch.reset();
     _stopwatch.start();
 
-    try {
-      final dio = Dio();
-      final response = await dio.head(url);
-      if (response.statusCode == 200) {
-        _totalBytes = int.parse(
-          response.headers.value('content-length') ?? '0',
-        );
-      }
-    } catch (e) {
-      print("Error getting file size: $e");
-      // Continue without total size, some features will be disabled
+    final downloads = format == 'mp4' ? videoInfo.downloads.mp4 : videoInfo.downloads.mp3;
+    if (downloads.isEmpty) {
+      _onDownloadError(Exception('No download links available'));
+      return;
     }
 
-    _timer?.cancel();
-    _timer = Timer.periodic(const Duration(milliseconds: 500), (timer) {
-      _calculateSpeedAndRemainingTime();
-    });
+    final download = downloads.first;
+    if (download.url == null) {
+      _onDownloadError(Exception('No download links available'));
+      return;
+    }
 
-    FileDownloader.downloadFile(
-      url: url,
-      name: title,
-      onProgress: (fileName, progress) {
-        _progress = progress / 100;
-        if (_totalBytes > 0) {
-          _receivedBytes = (_totalBytes * _progress).toInt();
-        }
-        notifyListeners();
-      },
-      onDownloadCompleted: (path) {
-        _progress = 1.0;
-        _isDownloading = false;
-        _isCompleted = true;
-        _stopwatch.stop();
-        _timer?.cancel();
-        _speed = '';
-        _remainingTime = '';
-        if (_totalBytes > 0) {
-          _receivedBytes = _totalBytes;
-        }
-        notifyListeners();
-      },
-      onDownloadError: (error) {
-        _isDownloading = false;
-        _isCompleted = false;
-        _stopwatch.stop();
-        _timer?.cancel();
-        _speed = 'Error';
-        _remainingTime = '';
-        notifyListeners();
-      },
-    );
+    try {
+      _timer?.cancel();
+      _timer = Timer.periodic(const Duration(milliseconds: 500), (timer) {
+        _calculateSpeedAndRemainingTime();
+      });
+
+      await FileDownloader.downloadFile(
+        url: download.url!,
+        name: download.filename,
+        onProgress: (fileName, progress) {
+          _progress = progress / 100;
+          _totalBytes = download.size ?? 0;
+          _receivedBytes = (_totalBytes * _progress).round();
+          notifyListeners();
+        },
+        onDownloadCompleted: (path) {
+          _progress = 1.0;
+          _isDownloading = false;
+          _isCompleted = true;
+          _stopwatch.stop();
+          _timer?.cancel();
+          _speed = '';
+          _remainingTime = '';
+          if (_totalBytes > 0) {
+            _receivedBytes = _totalBytes;
+          }
+          _downloadedVideos.add(path);
+          notifyListeners();
+        },
+        onDownloadError: (error) {
+          _onDownloadError(Exception(error));
+        },
+      );
+    } catch (e) {
+      _onDownloadError(e);
+    }
+  }
+
+  void _onDownloadError(dynamic e) {
+    _isDownloading = false;
+    _isCompleted = false;
+    _stopwatch.stop();
+    _timer?.cancel();
+    _speed = 'Error';
+    _remainingTime = '';
+    notifyListeners();
   }
 
   void _calculateSpeedAndRemainingTime() {
@@ -127,13 +138,12 @@ class DownloadProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  void pauseDownload() {
-    // Not implemented
-    notifyListeners();
-  }
+  void pauseDownload() {}
 
-  void resumeDownload() {
-    // Not implemented
+  void resumeDownload() {}
+
+  void clearHistory() {
+    _downloadedVideos.clear();
     notifyListeners();
   }
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:myapp/view/screens/video_player_screen.dart';
 import 'package:myapp/view/theme/app_theme.dart';
 import 'package:provider/provider.dart';
 import '../../providers/download_provider.dart';
@@ -10,7 +11,18 @@ class DownloadsManagerScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppTheme.backgroundDark,
-      appBar: AppBar(title: const Text('Downloads')),
+      appBar: AppBar(
+        title: const Text('Downloads'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.delete_forever),
+            onPressed: () {
+              Provider.of<DownloadProvider>(context, listen: false)
+                  .clearHistory();
+            },
+          ),
+        ],
+      ),
       body: Consumer<DownloadProvider>(
         builder: (context, downloadProvider, child) {
           return ListView(
@@ -44,12 +56,23 @@ class DownloadsManagerScreen extends StatelessWidget {
                     style: Theme.of(context).textTheme.titleLarge,
                   ),
                 ),
-              ...downloadProvider.downloadedVideos.map((video) {
+              ...downloadProvider.downloadedVideos.map((videoPath) {
+                final fileName = videoPath.split('/').last;
                 return ListTile(
-                  title: Text(video),
-                  trailing: const Icon(
-                    Icons.check_circle,
-                    color: AppTheme.primary,
+                  title: Text(fileName),
+                  trailing: IconButton(
+                    icon: const Icon(Icons.play_arrow),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => VideoPlayerScreen(
+                            videoUrl: videoPath,
+                            isLocal: true,
+                          ),
+                        ),
+                      );
+                    },
                   ),
                 );
               }),
