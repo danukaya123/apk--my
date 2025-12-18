@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:myapp/models/video_info.dart';
 import 'package:myapp/providers/download_provider.dart';
+import 'package:myapp/view/screens/about_screen.dart';
+import 'package:myapp/view/screens/settings_screen.dart';
 import 'package:provider/provider.dart';
+import 'package:share_plus/share_plus.dart';
 
 class DownloadingScreen extends StatelessWidget {
   final VideoInfo videoInfo;
@@ -23,9 +26,49 @@ class DownloadingScreen extends StatelessWidget {
           onPressed: () => Navigator.of(context).pop(),
         ),
         actions: [
-          IconButton(
+          PopupMenuButton<String>(
+            onSelected: (value) {
+              if (value == 'settings') {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const SettingsScreen()),
+                );
+              } else if (value == 'about') {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const AboutScreen()),
+                );
+              } else if (value == 'share') {
+                final videoUrl = videoInfo.downloads.mp4.first.url;
+                if (videoUrl != null) {
+                  Share.share('Check out this video! $videoUrl');
+                }
+              }
+            },
+            itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+              const PopupMenuItem<String>(
+                value: 'settings',
+                child: ListTile(
+                  leading: Icon(Icons.settings), 
+                  title: Text('Settings'),
+                ),
+              ),
+              const PopupMenuItem<String>(
+                value: 'about',
+                child: ListTile(
+                  leading: Icon(Icons.info), 
+                  title: Text('About'),
+                ),
+              ),
+              const PopupMenuItem<String>(
+                value: 'share',
+                child: ListTile(
+                  leading: Icon(Icons.share), 
+                  title: Text('Share'),
+                ),
+              ),
+            ],
             icon: const Icon(Icons.more_vert, color: Colors.white),
-            onPressed: () {},
           ),
         ],
       ),

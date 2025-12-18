@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:myapp/providers/download_provider.dart';
+import 'package:myapp/providers/theme_provider.dart';
 import 'package:myapp/providers/video_provider.dart';
 import 'package:myapp/view/screens/splash_screen.dart';
 import 'package:myapp/view/theme/app_theme.dart';
@@ -18,12 +19,19 @@ class MyApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(create: (context) => VideoProvider()),
         ChangeNotifierProvider(create: (context) => DownloadProvider()),
+        ChangeNotifierProvider(create: (context) => ThemeProvider()),
       ],
-      child: MaterialApp(
-        title: 'YouTube Downloader',
-        theme: AppTheme.darkTheme, // Correctly referencing the theme
-        home: const SplashScreen(),
-        debugShowCheckedModeBanner: false,
+      child: Consumer<ThemeProvider>(
+        builder: (context, themeProvider, child) {
+          return MaterialApp(
+            title: 'YouTube Downloader',
+            theme: AppTheme.lightTheme,
+            darkTheme: AppTheme.darkTheme,
+            themeMode: themeProvider.themeMode,
+            home: const SplashScreen(),
+            debugShowCheckedModeBanner: false,
+          );
+        },
       ),
     );
   }

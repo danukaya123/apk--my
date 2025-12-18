@@ -5,6 +5,7 @@ import 'package:myapp/view/screens/downloading_screen.dart';
 import 'package:myapp/view/screens/video_player_screen.dart';
 import 'package:myapp/view/theme/app_theme.dart';
 import 'package:provider/provider.dart';
+import 'package:share_plus/share_plus.dart';
 import '../../providers/video_provider.dart';
 import '../../models/video_info.dart';
 
@@ -220,7 +221,10 @@ class VideoThumbnail extends StatelessWidget {
               child: IconButton(
                 icon: const Icon(Icons.share_rounded, color: Colors.white),
                 onPressed: () {
-                  // TODO: Implement share
+                  final videoUrl = videoInfo.downloads.mp4.first.url;
+                  if (videoUrl != null) {
+                    Share.share('Check out this video! $videoUrl');
+                  }
                 },
               ),
             ),
