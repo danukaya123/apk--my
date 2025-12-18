@@ -30,6 +30,11 @@ class VideoInfo {
     );
   }
 
+  Map<String, dynamic> toJson() => {
+        'metadata': metadata.toJson(),
+        'downloads': downloads.toJson(),
+      };
+
   factory VideoInfo.fromTiktokJson(Map<String, dynamic> json) {
     return VideoInfo(
       metadata: Metadata(
@@ -143,6 +148,15 @@ class Metadata {
       duration: formattedDuration,
     );
   }
+
+  Map<String, dynamic> toJson() => {
+        'title': title,
+        'thumbnail': thumbnail,
+        'views': views,
+        'description': description,
+        'author': author,
+        'duration': duration,
+      };
 }
 
 class Downloads {
@@ -160,6 +174,11 @@ class Downloads {
         .toList();
     return Downloads(mp4: mp4List, mp3: mp3List);
   }
+
+  Map<String, dynamic> toJson() => {
+        'mp4': mp4.map((i) => i.toJson()).toList(),
+        'mp3': mp3.map((i) => i.toJson()).toList(),
+      };
 
   Downloads copyWith({
     List<DownloadFormat>? mp4,
@@ -196,6 +215,14 @@ class DownloadFormat {
       url: json['url'],
     );
   }
+
+  Map<String, dynamic> toJson() => {
+        'quality': quality,
+        'size': size,
+        'qualityNumber': qualityNumber,
+        'filename': filename,
+        'url': url,
+      };
 
   DownloadFormat copyWith({
     String? quality,

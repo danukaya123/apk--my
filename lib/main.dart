@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:myapp/providers/download_provider.dart';
 import 'package:myapp/providers/theme_provider.dart';
 import 'package:myapp/providers/video_provider.dart';
-import 'package:myapp/view/screens/splash_screen.dart';
+import 'package:myapp/view/screens/main_screen.dart';
 import 'package:myapp/view/theme/app_theme.dart';
 import 'package:provider/provider.dart';
 
@@ -28,7 +28,7 @@ class MyApp extends StatelessWidget {
             theme: AppTheme.lightTheme,
             darkTheme: AppTheme.darkTheme,
             themeMode: themeProvider.themeMode,
-            home: const SplashScreen(),
+            home: const MainScreen(),
             debugShowCheckedModeBanner: false,
           );
         },

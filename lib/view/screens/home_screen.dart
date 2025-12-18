@@ -1,258 +1,264 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:myapp/providers/video_provider.dart';
-import 'package:myapp/view/screens/details_screen.dart';
-import 'package:myapp/view/screens/settings_screen.dart';
+import 'package:intl/intl.dart';
+import 'package:myapp/models/completed_download.dart';
+import 'package:myapp/providers/download_provider.dart';
+import 'package:myapp/view/screens/files_screen.dart';
+import 'package:myapp/view/screens/search_screen.dart';
+import 'package:myapp/view/theme/app_theme.dart';
+import 'package:myapp/view/widgets/recent_download_card.dart';
 import 'package:provider/provider.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
   @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  final TextEditingController _searchController = TextEditingController();
+
+  @override
   Widget build(BuildContext context) {
-    final TextEditingController controller = TextEditingController();
+    final downloadProvider = Provider.of<DownloadProvider>(context);
 
     return Scaffold(
-      backgroundColor: const Color(0xFF1A1A1A),
+      backgroundColor: AppTheme.backgroundDark,
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
+        backgroundColor: AppTheme.backgroundDark,
         elevation: 0,
-        title: Row(
-          children: [
-            Container(
-              width: 40,
-              height: 40,
-              decoration: const BoxDecoration(
-                shape: BoxShape.circle,
-                color: Color(0xFF29D67E),
-              ),
-              child: const Icon(Icons.flash_on, color: Colors.black),
-            ),
-            const SizedBox(width: 12),
-            const Text(
-              'Quizontal',
-              style: TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-                fontSize: 24,
-              ),
-            ),
-          ],
+        title: const Text(
+          'Quizontal',
+          style: TextStyle(fontWeight: FontWeight.bold),
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.settings, color: Colors.white, size: 28),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const SettingsScreen()),
-              );
-            },
+            icon: const Icon(
+              Icons.notifications_none_outlined,
+              color: Colors.white,
+            ),
+            onPressed: () {},
           ),
         ],
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 20.0),
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const SizedBox(height: 40),
-            const Text(
-              'Paste a link to',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 32,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const Text(
-              'start downloading',
-              style: TextStyle(
-                color: Color(0xFF29D67E),
-                fontSize: 32,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 12),
-            const Text(
-              'Supports YouTube Videos & Shorts',
-              style: TextStyle(color: Colors.white70, fontSize: 16),
-            ),
-            const SizedBox(height: 50),
-            _buildUrlTextField(controller, context),
-            const SizedBox(height: 12),
-            const Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(Icons.info_outline, color: Colors.white70, size: 16),
-                SizedBox(width: 8),
-                Text(
-                  'Auto-detects from clipboard',
-                  style: TextStyle(color: Colors.white70, fontSize: 14),
-                ),
-              ],
-            ),
-            const SizedBox(height: 40),
-            _buildGetVideoButton(context, controller),
-            const SizedBox(height: 60),
-            _buildReadyToDownloadCard(),
             const SizedBox(height: 20),
+            _buildSearchBar(downloadProvider),
+            const SizedBox(height: 30),
+            _buildSupportedPlatforms(),
+            const SizedBox(height: 30),
+            _buildRecentDownloadsHeader(context),
+            const SizedBox(height: 20),
+            Expanded(
+              child: _buildGroupedDownloads(downloadProvider.completedDownloads),
+            ),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildUrlTextField(
-    TextEditingController controller,
-    BuildContext context,
-  ) {
-    return Container(
-      decoration: BoxDecoration(
-        color: const Color(0xFF2C2C2E),
-        borderRadius: BorderRadius.circular(28),
-      ),
-      child: TextField(
-        controller: controller,
-        style: const TextStyle(color: Colors.white, fontSize: 16),
-        decoration: InputDecoration(
-          hintText: 'Paste YouTube Link Here...',
-          hintStyle: const TextStyle(color: Colors.white54),
-          border: InputBorder.none,
-          contentPadding: const EdgeInsets.symmetric(
-            horizontal: 24,
-            vertical: 22,
-          ),
-          suffixIcon: Container(
-            margin: const EdgeInsets.all(6),
-            decoration: BoxDecoration(
-              color: const Color(0xFF3E3E40),
-              borderRadius: BorderRadius.circular(22),
-            ),
-            child: IconButton(
-              icon: const Icon(Icons.content_paste, color: Color(0xFF29D67E)),
-              onPressed: () async {
-                final clipboardData = await Clipboard.getData(
-                  Clipboard.kTextPlain,
-                );
-                if (clipboardData != null) {
-                  controller.text = clipboardData.text ?? '';
-                }
-              },
-            ),
-          ),
+  Widget _buildSearchBar(DownloadProvider downloadProvider) {
+    return TextField(
+      controller: _searchController,
+      decoration: InputDecoration(
+        hintText: 'Search Downloaded Files',
+        hintStyle: const TextStyle(color: AppTheme.textSecondary),
+        prefixIcon: const Icon(Icons.search, color: AppTheme.textSecondary),
+        filled: true,
+        fillColor: AppTheme.surfaceDark,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12.0),
+          borderSide: BorderSide.none,
         ),
       ),
+      onSubmitted: (query) {
+        final searchResults = downloadProvider.completedDownloads.where((
+          download,
+        ) {
+          final title = download.videoInfo.metadata.title;
+          return title.toLowerCase().contains(query.toLowerCase());
+        }).toList();
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => SearchScreen(searchResults: searchResults),
+          ),
+        );
+      },
     );
   }
 
-  Widget _buildGetVideoButton(
-    BuildContext context,
-    TextEditingController controller,
-  ) {
-    final videoProvider = Provider.of<VideoProvider>(context);
-
-    return SizedBox(
-      width: double.infinity,
-      child: ElevatedButton(
-        onPressed: videoProvider.isLoading
-            ? null
-            : () {
-                final url = controller.text.trim();
-                if (url.isNotEmpty) {
-                  videoProvider.fetchVideoInfo(url).then((_) {
-                    if (videoProvider.videoInfo != null) {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const DetailsScreen(),
-                        ),
-                      );
-                    }
-                  });
-                }
-              },
-        style: ElevatedButton.styleFrom(
-          backgroundColor: const Color(0xFF29D67E),
-          padding: const EdgeInsets.symmetric(vertical: 22),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(28),
-          ),
-          shadowColor: const Color(0xFF29D67E).withOpacity(0.6),
-          elevation: 15,
-        ),
-        child: videoProvider.isLoading
-            ? const CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(Colors.black),
-              )
-            : const Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    'Get Video',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black,
-                    ),
-                  ),
-                  SizedBox(width: 12),
-                  Icon(Icons.download_rounded, color: Colors.black, size: 28),
-                ],
-              ),
-      ),
-    );
-  }
-
-  Widget _buildReadyToDownloadCard() {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
-      decoration: BoxDecoration(
-        color: const Color(0xFF2C2C2E),
-        borderRadius: BorderRadius.circular(28),
-        gradient: LinearGradient(
-          colors: [
-            const Color(0xFF2C2C2E),
-            const Color(0xFF1E1E1E).withOpacity(0.8),
-          ],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.4),
-            blurRadius: 15,
-            spreadRadius: 2,
-          ),
-        ],
-      ),
-      child: const Column(
-        children: [
-          CircleAvatar(
-            radius: 35,
-            backgroundColor: Color(0xFF3E3E40),
-            child: Icon(
-              Icons.play_arrow_rounded,
-              color: Colors.white,
-              size: 40,
-            ),
-          ),
-          SizedBox(height: 20),
-          Text(
-            'Ready to download',
+  Widget _buildSupportedPlatforms() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        const Center(
+          child: Text(
+            'Supported Platforms',
             style: TextStyle(
-              color: Colors.white,
               fontSize: 18,
               fontWeight: FontWeight.bold,
+              color: Colors.white,
             ),
           ),
-          SizedBox(height: 8),
-          Text(
-            'Waiting for valid link...',
-            style: TextStyle(color: Colors.white70, fontSize: 14),
-          ),
-        ],
-      ),
+        ),
+        const SizedBox(height: 16),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            _buildPlatformIcon(Icons.play_arrow, 'YouTube'),
+            _buildPlatformIcon(Icons.facebook, 'Facebook'),
+            _buildPlatformIcon(Icons.music_note, 'TikTok'),
+          ],
+        ),
+      ],
     );
   }
+
+  Widget _buildPlatformIcon(IconData icon, String label) {
+    return Column(
+      children: [
+        CircleAvatar(
+          radius: 28,
+          backgroundColor: AppTheme.surfaceDark,
+          child: Icon(icon, color: AppTheme.primary, size: 28),
+        ),
+        const SizedBox(height: 8),
+        Text(
+          label,
+          style: const TextStyle(color: AppTheme.textSecondary, fontSize: 12),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildRecentDownloadsHeader(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        const Text(
+          'Recent Downloads',
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
+        ),
+        TextButton(
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const FilesScreen()),
+            );
+          },
+          child: const Text(
+            'View All',
+            style: TextStyle(color: AppTheme.primary),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildGroupedDownloads(List<CompletedDownload> downloads) {
+    if (downloads.isEmpty) {
+      return const Center(
+        child: Text(
+          'No downloads yet!',
+          style: TextStyle(color: AppTheme.textSecondary, fontSize: 16),
+        ),
+      );
+    }
+
+    final groupedDownloads = _groupDownloadsByTime(downloads);
+
+    return ListView.builder(
+      itemCount: groupedDownloads.length,
+      itemBuilder: (context, index) {
+        final group = groupedDownloads[index];
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8.0),
+              child: Text(
+                group.title,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                ),
+              ),
+            ),
+            ...group.downloads.map((download) => RecentDownloadCard(download: download)),
+          ],
+        );
+      },
+    );
+  }
+
+  List<_DownloadGroup> _groupDownloadsByTime(List<CompletedDownload> downloads) {
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final yesterday = today.subtract(const Duration(days: 1));
+    final startOfWeek = today.subtract(Duration(days: now.weekday - 1));
+    final startOfMonth = DateTime(now.year, now.month, 1);
+
+    final groups = <String, List<CompletedDownload>>{
+      'Today': [],
+      'Yesterday': [],
+      'This Week': [],
+      'This Month': [],
+    };
+    final pastMonths = <String, List<CompletedDownload>>{};
+
+    for (final download in downloads) {
+      final downloadedDate = DateTime(
+        download.downloadedAt.year,
+        download.downloadedAt.month,
+        download.downloadedAt.day,
+      );
+
+      if (downloadedDate.isAtSameMomentAs(today)) {
+        groups['Today']!.add(download);
+      } else if (downloadedDate.isAtSameMomentAs(yesterday)) {
+        groups['Yesterday']!.add(download);
+      } else if (downloadedDate.isAfter(startOfWeek)) {
+        groups['This Week']!.add(download);
+      } else if (download.downloadedAt.isAfter(startOfMonth)) {
+        groups['This Month']!.add(download);
+      } else {
+        final monthYear = DateFormat('MMMM yyyy').format(download.downloadedAt);
+        if (!pastMonths.containsKey(monthYear)) {
+          pastMonths[monthYear] = [];
+        }
+        pastMonths[monthYear]!.add(download);
+      }
+    }
+
+    final result = <_DownloadGroup>[];
+    groups.forEach((title, downloads) {
+      if (downloads.isNotEmpty) {
+        result.add(_DownloadGroup(title, downloads));
+      }
+    });
+
+    pastMonths.forEach((title, downloads) {
+      result.add(_DownloadGroup(title, downloads));
+    });
+
+    return result;
+  }
+}
+
+class _DownloadGroup {
+  final String title;
+  final List<CompletedDownload> downloads;
+
+  _DownloadGroup(this.title, this.downloads);
 }

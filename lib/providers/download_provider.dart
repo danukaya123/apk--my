@@ -1,8 +1,12 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_file_downloader/flutter_file_downloader.dart';
+import 'package:myapp/models/completed_download.dart';
 import 'package:myapp/models/video_info.dart';
 import 'dart:math';
+
+import 'package:shared_preferences/shared_preferences.dart';
 
 class DownloadProvider with ChangeNotifier {
   double _progress = 0;
@@ -13,12 +17,14 @@ class DownloadProvider with ChangeNotifier {
   int _totalBytes = 0;
   int _receivedBytes = 0;
 
-  final List<String> _downloadedVideos = [];
+  final List<CompletedDownload> _completedDownloads = [];
 
   final Stopwatch _stopwatch = Stopwatch();
   Timer? _timer;
 
-  DownloadProvider();
+  DownloadProvider() {
+    _loadCompletedDownloads();
+  }
 
   double get progress => _progress;
   bool get isDownloading => _isDownloading;
@@ -27,11 +33,31 @@ class DownloadProvider with ChangeNotifier {
   String get remainingTime => _remainingTime;
   String get totalSize => _formatBytes(_totalBytes);
   String get downloadedSize => _formatBytes(_receivedBytes);
-  List<String> get downloadedVideos => _downloadedVideos;
+  List<CompletedDownload> get completedDownloads => _completedDownloads;
   bool get isPaused => false;
 
   Map<String, double> get downloadProgress =>
       _isDownloading ? {'current': _progress} : {};
+
+  Future<void> _loadCompletedDownloads() async {
+    final prefs = await SharedPreferences.getInstance();
+    final downloadsJson = prefs.getStringList('completedDownloads') ?? [];
+    _completedDownloads.clear();
+    for (final jsonString in downloadsJson) {
+      try {
+        _completedDownloads.add(CompletedDownload.fromJson(jsonDecode(jsonString)));
+      } catch (e) {
+        // Handle potential parsing errors
+      }
+    }
+    notifyListeners();
+  }
+
+  Future<void> _saveCompletedDownloads() async {
+    final prefs = await SharedPreferences.getInstance();
+    final downloadsJson = _completedDownloads.map((d) => jsonEncode(d.toJson())).toList();
+    await prefs.setStringList('completedDownloads', downloadsJson);
+  }
 
   String _formatBytes(int bytes) {
     if (bytes <= 0) return "0 B";
@@ -74,6 +100,7 @@ class DownloadProvider with ChangeNotifier {
       await FileDownloader.downloadFile(
         url: download.url!,
         name: download.filename,
+        downloadDestination: DownloadDestinations.publicDownloads,
         onProgress: (fileName, progress) {
           _progress = progress / 100;
           _totalBytes = download.size ?? 0;
@@ -91,7 +118,12 @@ class DownloadProvider with ChangeNotifier {
           if (_totalBytes > 0) {
             _receivedBytes = _totalBytes;
           }
-          _downloadedVideos.add(path);
+          _completedDownloads.add(CompletedDownload(
+            videoInfo: videoInfo,
+            filePath: path,
+            downloadedAt: DateTime.now(),
+          ));
+          _saveCompletedDownloads();
           notifyListeners();
         },
         onDownloadError: (error) {
@@ -143,7 +175,8 @@ class DownloadProvider with ChangeNotifier {
   void resumeDownload() {}
 
   void clearHistory() {
-    _downloadedVideos.clear();
+    _completedDownloads.clear();
+    _saveCompletedDownloads();
     notifyListeners();
   }
 }
